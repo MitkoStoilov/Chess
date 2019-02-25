@@ -1,0 +1,14 @@
+{
+  "name": "chess",
+  "version": "1.0.0",
+  "description": "Chess website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dimitar Stoilov and Tsenko Tsenkov",
+  "license": "ISC",
+  "dependencies": {
+    "express": "*"
+  }
+}
