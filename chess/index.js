@@ -32,31 +32,38 @@ app.set('view engine', 'ejs');
 
 users = [];
 connections = [];
-var oponent;
+var roomno;
 var games = [
   {
     id: 1,
     gamefen: "test",
     player1: "mitko",
     player2: "pesho"
+  },
+  {
+    id: 2,
+    gamefen: "testt",
+    player1: "mitkoo",
+    player2: "peshoo"
   }
 ];
 
 app.get('/', function(req, res){
-
+  var ingame = false;
   if(req.session.email) {
     for(var i = 0; i < games.length;i++){
       if(req.session.email===games[i].player1){
-        res.redirect('/about');
-        oponent = games[i].player2
+        res.redirect('/game/?roomno='+games[i].id);
+        ingame = true;
       } else if(req.session.email===games[i].player2){
-        res.redirect('/about');
-        oponent = games[i].player1
-      } else {
-        res.render('index',{
-          games: games
-        });
+        res.redirect('/game/?roomno='+games[i].id);
+        ingame = true;
       }
+    }
+    if(ingame === false){
+      res.render('index',{
+        games: games
+      });
     }
   } else {
     res.render('login.ejs', {layout:false});
@@ -69,10 +76,8 @@ app.post('/login',function(req, res){
 	res.end('done');
 });
 
-app.get('/about', function(req, res){
-  res.render('about',{
-    oponent: oponent
-  });
+app.get('/game/', function(req, res){
+  res.render('about');
 });
 
 app.get('/logout',function(req,res){

@@ -1,3 +1,12 @@
 <h1> Hello there</h1>
-<h4>You are in game with <%= oponent%></h4>
+<h4>room number:</h4>
+<h4 id="roomno"></h4>
 <a href="/logout">Logout</a>
+
+<script type="text/javascript">
+  var parameter = window.location.search.replace( "?", "" );
+
+  var values = parameter.split("=");
+  document.getElementById('roomno').innerHTML = values[1];
+
+</script>
