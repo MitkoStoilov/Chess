@@ -1,0 +1,22 @@
+<input type="text" size="40" placeholder="Type your email" id="email"><br />
+<input type="password" size="40" placeholder="Type your password" id="password"><br />
+<input type="button" value="Submit" id="submit">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+        $(document).ready(function(){
+            var email, password;
+            $("#submit").click(function(){
+                email = $("#email").val();
+                password = $("#password").val();
+
+                $.post("http://localhost:3000/login", {
+                    email: email,
+                    pass: password
+                }, function(data) {
+                    if(data==='done') {
+                        window.location.href="/";
+                    }
+                });
+            });
+        });
+</script>

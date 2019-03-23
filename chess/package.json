@@ -1,14 +1,19 @@
 {
-  "name": "chess",
+  "name": "ejs_test",
   "version": "1.0.0",
-  "description": "Chess website",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Dimitar Stoilov and Tsenko Tsenkov",
+  "author": "Mitko",
   "license": "ISC",
   "dependencies": {
-    "express": "*"
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-ejs-layouts": "^2.5.0",
+    "express-session": "^1.15.1"
   }
 }
