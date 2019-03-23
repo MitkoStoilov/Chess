@@ -32,34 +32,47 @@ app.set('view engine', 'ejs');
 
 users = [];
 connections = [];
+var oponent;
+var games = [
+  {
+    id: 1,
+    gamefen: "test",
+    player1: "mitko",
+    player2: "pesho"
+  }
+];
 
 app.get('/', function(req, res){
-  var games = [
-    {
-      id: 1,
-      gamefen: "test",
-      player1: "mitko",
-      player2: "pesho"
-    }
-  ];
+
   if(req.session.email) {
-    res.render('index',{
-      games: games
-    });
-  }
-  else {
+    for(var i = 0; i < games.length;i++){
+      if(req.session.email===games[i].player1){
+        res.redirect('/about');
+        oponent = games[i].player2
+      } else if(req.session.email===games[i].player2){
+        res.redirect('/about');
+        oponent = games[i].player1
+      } else {
+        res.render('index',{
+          games: games
+        });
+      }
+    }
+  } else {
     res.render('login.ejs', {layout:false});
   }
 });
 
 app.post('/login',function(req, res){
 	req.session.email = req.body.email;
-	req.session.password = req.body.pass;
+//	req.session.password = req.body.pass;
 	res.end('done');
 });
 
 app.get('/about', function(req, res){
-  res.render('about');
+  res.render('about',{
+    oponent: oponent
+  });
 });
 
 app.get('/logout',function(req,res){
@@ -71,7 +84,6 @@ app.get('/logout',function(req,res){
 			res.redirect('/');
 		}
 	});
-
 });
 
 server.listen(process.env.PORT || 3000);
