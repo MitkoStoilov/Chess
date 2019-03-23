@@ -1,2 +1,14 @@
 <h1>Home page</h1>
 <a href="/logout">Logout</a>
+
+<ul>
+  <% for(var game of games) {%>
+
+      <li>
+        id: <%= game.id %><br>
+        player1: <%= game.player1 %><br>
+        player2: <%= game.player2 %>
+      </li>
+
+  <%}%>
+</ul>
