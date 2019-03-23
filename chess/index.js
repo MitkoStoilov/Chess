@@ -32,37 +32,38 @@ app.set('view engine', 'ejs');
 
 users = [];
 connections = [];
-var roomno;
+
 var games = [
   {
-    id: 1,
+    roomno: 1,
     gamefen: "test",
     player1: "mitko",
     player2: "pesho"
   },
   {
-    id: 2,
+    roomno: 2,
     gamefen: "testt",
-    player1: "mitkoo",
-    player2: "peshoo"
+    player1: "tisho",
+    player2: "misho"
   }
 ];
 
 app.get('/', function(req, res){
   var ingame = false;
   if(req.session.email) {
-    for(var i = 0; i < games.length;i++){
+    for(var i = 0; i < games.length; i++){
       if(req.session.email===games[i].player1){
-        res.redirect('/game/?roomno='+games[i].id);
+        res.redirect('/game/?roomno='+games[i].roomno);
         ingame = true;
       } else if(req.session.email===games[i].player2){
-        res.redirect('/game/?roomno='+games[i].id);
+        res.redirect('/game/?roomno='+games[i].roomno);
         ingame = true;
       }
     }
     if(ingame === false){
       res.render('index',{
-        games: games
+        games: games,
+        users: users
       });
     }
   } else {
@@ -73,6 +74,7 @@ app.get('/', function(req, res){
 app.post('/login',function(req, res){
 	req.session.email = req.body.email;
 //	req.session.password = req.body.pass;
+  users.push(req.session.email);
 	res.end('done');
 });
 
@@ -81,7 +83,7 @@ app.get('/game/', function(req, res){
 });
 
 app.get('/logout',function(req,res){
-
+  users.splice(users.indexOf(req.session.email), 1);
 	req.session.destroy(function(err) {
 		if(err) {
 			console.log(err);
