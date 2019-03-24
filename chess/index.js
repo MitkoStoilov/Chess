@@ -6,7 +6,6 @@ var cors = require('cors');
 var session = require('express-session');
 var mongoose = require('mongoose');
 
-
 var app = express();
 var server = require('http').createServer(app);
 
@@ -21,10 +20,15 @@ db.once('open', function(){
 
 app.use(session({secret: 'awesome'}));
 
-app.use(bodyParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 app.use(expressLayouts);
 app.use(express.static(__dirname + '/views'));
+
+app.use('/css', express.static('css'));
+app.use('/img', express.static('img'));
+app.use('/js', express.static('js'));
 
 app.set('views', path.join(__dirname, 'views'));
 
@@ -36,13 +40,13 @@ connections = [];
 var games = [
   {
     roomno: 1,
-    gamefen: "test",
+    gamestate: "test",
     player1: "mitko",
     player2: "pesho"
   },
   {
     roomno: 2,
-    gamefen: "testt",
+    gamestate: "test",
     player1: "tisho",
     player2: "misho"
   }
@@ -81,6 +85,15 @@ app.post('/login',function(req, res){
 app.get('/game/', function(req, res){
   res.render('about');
 });
+
+
+///////////////////testing
+app.get('/test', function(req, res){
+
+  res.sendFile(__dirname + '/test.html');
+
+});
+//////////////////////////
 
 app.get('/logout',function(req,res){
   users.splice(users.indexOf(req.session.email), 1);
