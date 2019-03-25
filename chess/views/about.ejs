@@ -1,12 +1,17 @@
+<!--<link rel="stylesheet" href="/css/style.css">-->
+<link rel="stylesheet" href="/css/chessboard-0.3.0.min.css">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="/js/chessboard-0.3.0.min.js"></script>
 <h1>In Game</h1>
 <h4>room number:</h4>
 <h4 id="roomno"></h4>
 <a href="/logout">Logout</a>
-
+<br>
+<div id="board1" style="width: 400px; margin-top: 30px"></div>
 <script type="text/javascript">
   var parameter = window.location.search.replace( "?", "" );
 
   var values = parameter.split("=");
   document.getElementById('roomno').innerHTML = values[1];
-
+  var board1 = ChessBoard('board1', 'start');
 </script>
