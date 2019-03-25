@@ -22,17 +22,21 @@
 <script type="text/javascript">
   var parameter = window.location.search.replace( "?", "" );
   var values = parameter.split("=");
+  var roomno = values[1];
   document.getElementById('roomno').innerHTML = values[1];
 
 
   $(function(){
       var socket = io.connect();
-      var roomno;
-      var room = $('#room');
-      socket.on('connectToRoom',function(data) {
+      //var roomno;
+      //var room = $('#room');
+      /*socket.on('connectToRoom',function(data) {
           roomno = data;
           room.html(data);
-      });
+      });*/
+      socket.emit('connectToRoom', roomno);
+
+
 
       var fen;
 
@@ -41,6 +45,7 @@
         statusEl = $('#status'),
         fenEl = $('#fen'),
         pgnEl = $('#pgn');
+
 
 
       var onDragStart = function(source, piece, position, orientation) {
@@ -72,11 +77,18 @@
         board.position(game.fen());
       };
 
+      socket.on('load', function(data) {
+        board.position(data);
+        game.load(data);
+        updateStatus();
+      });
+
       socket.on('new move', function(data){
         board.position(data);
         game.load(data);
         updateStatus();
       });
+
 
       var updateStatus = function() {
 

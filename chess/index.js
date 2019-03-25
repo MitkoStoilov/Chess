@@ -41,13 +41,13 @@ connections = [];
 var games = [
   {
     roomno: 1,
-    gamestate: "test",
+    gamestate: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     player1: "mitko",
     player2: "pesho"
   },
   {
     roomno: 2,
-    gamestate: "test",
+    gamestate: "rnbqkbnr/ppppppp1/8/7p/3P4/P7/1PP1PPPP/RNBQKBNR b KQkq - 0 2",
     player1: "tisho",
     player2: "misho"
   }
@@ -110,10 +110,17 @@ io.sockets.on('connection', function(socket){
   console.log('Connected: %s sockets connected', connections.length);
 
 
-  if(io.nsps['/'].adapter.rooms["room-"+roomno] && io.nsps['/'].adapter.rooms["room-"+roomno].length > 1) roomno++;
-  socket.join("room-"+roomno);
+  //if(io.nsps['/'].adapter.rooms["room-"+roomno] && io.nsps['/'].adapter.rooms["room-"+roomno].length > 1) roomno++;
+  //socket.join("room-"+roomno);
 
-  io.sockets.in("room-"+roomno).emit('connectToRoom', roomno);
+  //io.sockets.in("room-"+roomno).emit('connectToRoom', roomno);
+  socket.on('connectToRoom', function(data){
+    socket.join("room-"+data);
+    console.log(data);
+    var index=data-1;
+    console.log(games[index].gamestate);
+    io.sockets.in("room-"+data).emit('load', games[index].gamestate);
+  });
 
 
   socket.on('disconnect', function(data){
@@ -122,6 +129,8 @@ io.sockets.on('connection', function(socket){
   });
 
   socket.on('make a move', function(data){
+    var index=data.num-1;
+    games[index].gamestate = data.fen;
     io.sockets.in("room-"+data.num).emit('new move', data.fen);
   });
 });
