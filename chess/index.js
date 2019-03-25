@@ -93,7 +93,7 @@ app.get('/test', function(req, res){
   res.sendFile(__dirname + '/test.html');
 
 });
-//////////////////////////
+/////////////////////////////
 
 app.get('/logout',function(req,res){
   users.splice(users.indexOf(req.session.email), 1);
