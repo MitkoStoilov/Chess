@@ -3,18 +3,19 @@
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="/js/chessboard-0.3.0.min.js"></script>
 <script src="/js/chess.js"></script>
+<div id = "container">
+  <h1>In Game</h1>
+  <h4>room number:</h4>
+  <h4 id="roomno"></h4>
+  <a href="/logout">Logout</a><br/>
 
-<h1>In Game</h1>
-<h4>room number:</h4>
-<h4 id="roomno"></h4>
-<a href="/logout">Logout</a><br/>
+  <div id="board" style="width: 400px; margin-top: 30px"></div>
 
-<div id="board" style="width: 400px; margin-top: 30px"></div>
-
-<div id="game_data">
-  <p>Status: <span id="status"></span></p>
-  <p>FEN: <span id="fen"></span></p>
-  <p>PGN: <span id="pgn"></span></p>
+  <div id="game_data">
+    <p>Status: <span id="status"></span></p>
+    <p>FEN: <span id="fen"></span></p>
+    <p>PGN: <span id="pgn"></span></p>
+  </div>
 </div>
 
 <script type="text/javascript">
