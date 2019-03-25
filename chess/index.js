@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 
 var app = express();
 var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
 
 /*var Game = require('./models/game');
 
@@ -51,6 +52,11 @@ var games = [
     player2: "misho"
   }
 ];
+
+var roomno=1;
+
+server.listen(process.env.PORT || 3000);
+console.log('Server running on port 3000...');
 
 app.get('/', function(req, res){
   var ingame = false;
@@ -98,5 +104,24 @@ app.get('/logout',function(req,res){
 	});
 });
 
-server.listen(process.env.PORT || 3000);
-console.log('Server running on port 3000...');
+
+io.sockets.on('connection', function(socket){
+  connections.push(socket);
+  console.log('Connected: %s sockets connected', connections.length);
+
+
+  if(io.nsps['/'].adapter.rooms["room-"+roomno] && io.nsps['/'].adapter.rooms["room-"+roomno].length > 1) roomno++;
+  socket.join("room-"+roomno);
+
+  io.sockets.in("room-"+roomno).emit('connectToRoom', roomno);
+
+
+  socket.on('disconnect', function(data){
+    connections.splice(connections.indexOf(socket), 1);
+    console.log('Disconnected %s sockets connected', connections.length);
+  });
+
+  socket.on('make a move', function(data){
+    io.sockets.in("room-"+data.num).emit('new move', data.fen);
+  });
+});

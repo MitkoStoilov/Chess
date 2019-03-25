@@ -3,6 +3,7 @@
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="/js/chessboard-0.3.0.min.js"></script>
 <script src="/js/chess.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <div id = "container">
   <h1>In Game</h1>
   <h4>room number:</h4>
@@ -23,84 +24,104 @@
   var values = parameter.split("=");
   document.getElementById('roomno').innerHTML = values[1];
 
-  var board,
-    game = new Chess(),
-    statusEl = $('#status'),
-    fenEl = $('#fen'),
-    pgnEl = $('#pgn');
 
-// do not pick up pieces if the game is over
-// only pick up pieces for the side to move
-  var onDragStart = function(source, piece, position, orientation) {
-    if (game.game_over() === true ||
-        (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-      return false;
-    }
-  };
+  $(function(){
+      var socket = io.connect();
+      var roomno;
+      var room = $('#room');
+      socket.on('connectToRoom',function(data) {
+          roomno = data;
+          room.html(data);
+      });
 
-  var onDrop = function(source, target) {
-    // see if the move is legal
-    var move = game.move({
-      from: source,
-      to: target,
-      promotion: 'q' // NOTE: always promote to a queen for example simplicity
-    });
+      var fen;
 
-    // illegal move
-    if (move === null) return 'snapback';
+      var board,
+        game = new Chess(),
+        statusEl = $('#status'),
+        fenEl = $('#fen'),
+        pgnEl = $('#pgn');
 
-    updateStatus();
-  };
 
-  // update the board position after the piece snap
-  // for castling, en passant, pawn promotion
-  var onSnapEnd = function() {
-    board.position(game.fen());
-  };
+      var onDragStart = function(source, piece, position, orientation) {
+        if (game.game_over() === true ||
+            (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+            (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+          return false;
+        }
+      };
 
-  var updateStatus = function() {
-    var status = '';
+      var onDrop = function(source, target) {
 
-    var moveColor = 'White';
-    if (game.turn() === 'b') {
-      moveColor = 'Black';
-    }
+        var move = game.move({
+          from: source,
+          to: target,
+          promotion: 'q'
+        });
 
-    // checkmate?
-    if (game.in_checkmate() === true) {
-      status = 'Game over, ' + moveColor + ' is in checkmate.';
-    }
+        if (move === null) return 'snapback';
 
-    // draw?
-    else if (game.in_draw() === true) {
-      status = 'Game over, drawn position';
-    }
+        socket.emit('make a move', {fen: game.fen(), num: roomno});
 
-    // game still on
-    else {
-      status = moveColor + ' to move';
+        updateStatus();
 
-      // check?
-      if (game.in_check() === true) {
-        status += ', ' + moveColor + ' is in check';
+      };
+
+
+      var onSnapEnd = function() {
+        board.position(game.fen());
+      };
+
+      socket.on('new move', function(data){
+        board.position(data);
+        game.load(data);
+        updateStatus();
+      });
+
+      var updateStatus = function() {
+
+        var status = '';
+
+        var moveColor = 'White';
+        if (game.turn() === 'b') {
+          moveColor = 'Black';
+        }
+
+
+        if (game.in_checkmate() === true) {
+          status = 'Game over, ' + moveColor + ' is in checkmate.';
+        }
+
+
+        else if (game.in_draw() === true) {
+          status = 'Game over, drawn position';
+        }
+
+
+        else {
+          status = moveColor + ' to move';
+
+
+        if (game.in_check() === true) {
+          status += ', ' + moveColor + ' is in check';
+        }
       }
-    }
 
-    statusEl.html(status);
-    fenEl.html(game.fen());
-    pgnEl.html(game.pgn());
-  };
+        statusEl.html(status);
+        fenEl.html(game.fen());
+        pgnEl.html(game.pgn());
+      };
 
-  var cfg = {
-    draggable: true,
-    position: 'start',
-    onDragStart: onDragStart,
-    onDrop: onDrop,
-    onSnapEnd: onSnapEnd
-  };
-  board = ChessBoard('board', cfg);
+      var cfg = {
+        draggable: true,
+        position: 'start',
+        onDragStart: onDragStart,
+        onDrop: onDrop,
+        onSnapEnd: onSnapEnd
+      };
+      board = ChessBoard('board', cfg);
 
-  updateStatus();
+      updateStatus();
+    });
 
 </script>
