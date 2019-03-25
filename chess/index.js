@@ -92,7 +92,6 @@ app.get('/game/', function(req, res){
   res.render('about');
 });
 
-
 app.get('/logout',function(req,res){
   users.splice(users.indexOf(req.session.email), 1);
 	req.session.destroy(function(err) {
@@ -104,24 +103,19 @@ app.get('/logout',function(req,res){
 	});
 });
 
-
 io.sockets.on('connection', function(socket){
   connections.push(socket);
   console.log('Connected: %s sockets connected', connections.length);
 
-
-  //if(io.nsps['/'].adapter.rooms["room-"+roomno] && io.nsps['/'].adapter.rooms["room-"+roomno].length > 1) roomno++;
-  //socket.join("room-"+roomno);
-
-  //io.sockets.in("room-"+roomno).emit('connectToRoom', roomno);
   socket.on('connectToRoom', function(data){
     socket.join("room-"+data);
-    console.log(data);
+    //console.log(data);
     var index=data-1;
-    console.log(games[index].gamestate);
-    io.sockets.in("room-"+data).emit('load', games[index].gamestate);
+    //console.log(games[index].gamestate);
+    io.sockets.in("room-"+data).emit('load', {
+      fen: games[index].gamestate
+    });
   });
-
 
   socket.on('disconnect', function(data){
     connections.splice(connections.indexOf(socket), 1);

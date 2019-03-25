@@ -44,7 +44,9 @@
         game = new Chess(),
         statusEl = $('#status'),
         fenEl = $('#fen'),
-        pgnEl = $('#pgn');
+        pgnEl = $('#pgn'),
+        your_name,
+        player2;
 
 
 
@@ -76,10 +78,10 @@
       var onSnapEnd = function() {
         board.position(game.fen());
       };
-
+      var flag = 0;
       socket.on('load', function(data) {
-        board.position(data);
-        game.load(data);
+        board.position(data.fen);
+        game.load(data.fen);
         updateStatus();
       });
 
@@ -126,11 +128,13 @@
 
       var cfg = {
         draggable: true,
+        orientation: 'white',
         position: 'start',
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
       };
+
       board = ChessBoard('board', cfg);
 
       updateStatus();
