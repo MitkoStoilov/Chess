@@ -47,14 +47,14 @@ var games = [
   },
   {
     roomno: 2,
-    gamestate: "rnbqkbnr/ppppppp1/8/7p/3P4/P7/1PP1PPPP/RNBQKBNR b KQkq - 0 2",
+    gamestate: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     player1: "tisho",
     player2: "misho"
   }
 ];
 
 var roomno=1;
-
+var player;
 server.listen(process.env.PORT || 3000);
 console.log('Server running on port 3000...');
 
@@ -64,9 +64,11 @@ app.get('/', function(req, res){
     for(var i = 0; i < games.length; i++){
       if(req.session.email===games[i].player1){
         res.redirect('/game/?roomno='+games[i].roomno);
+        player = games[i].player1;
         ingame = true;
       } else if(req.session.email===games[i].player2){
         res.redirect('/game/?roomno='+games[i].roomno);
+        player = games[i].player2;
         ingame = true;
       }
     }
@@ -89,7 +91,9 @@ app.post('/login',function(req, res){
 });
 
 app.get('/game/', function(req, res){
-  res.render('about');
+  res.render('about',{
+    user: player
+  });
 });
 
 app.get('/logout',function(req,res){

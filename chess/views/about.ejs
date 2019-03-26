@@ -16,6 +16,7 @@
     <p>Status: <span id="status"></span></p>
     <p>FEN: <span id="fen"></span></p>
     <p>PGN: <span id="pgn"></span></p>
+    <input type="button" id="flipOrientationBtn" value="Flip orientation" />
   </div>
 </div>
 
@@ -28,15 +29,8 @@
 
   $(function(){
       var socket = io.connect();
-      //var roomno;
-      //var room = $('#room');
-      /*socket.on('connectToRoom',function(data) {
-          roomno = data;
-          room.html(data);
-      });*/
+
       socket.emit('connectToRoom', roomno);
-
-
 
       var fen;
 
@@ -44,9 +38,7 @@
         game = new Chess(),
         statusEl = $('#status'),
         fenEl = $('#fen'),
-        pgnEl = $('#pgn'),
-        your_name,
-        player2;
+        pgnEl = $('#pgn');
 
 
 
@@ -56,7 +48,9 @@
             (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
           return false;
         }
+
       };
+
 
       var onDrop = function(source, target) {
 
@@ -78,12 +72,9 @@
       var onSnapEnd = function() {
         board.position(game.fen());
       };
-      var flag = 0;
-      socket.on('load', function(data) {
-        board.position(data.fen);
-        game.load(data.fen);
-        updateStatus();
-      });
+
+
+
 
       socket.on('new move', function(data){
         board.position(data);
@@ -126,6 +117,7 @@
         pgnEl.html(game.pgn());
       };
 
+
       var cfg = {
         draggable: true,
         orientation: 'white',
@@ -136,6 +128,14 @@
       };
 
       board = ChessBoard('board', cfg);
+
+      socket.on('load', function(data) {
+        board.position(data.fen);
+        game.load(data.fen);
+        updateStatus();
+      });
+
+      $('#flipOrientationBtn').on('click', board.flip);
 
       updateStatus();
     });
