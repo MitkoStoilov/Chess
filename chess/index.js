@@ -92,7 +92,7 @@ app.post('/login',function(req, res){
 
 app.get('/game/', function(req, res){
   res.render('about',{
-    user: player
+    user: req.session.email
   });
 });
 

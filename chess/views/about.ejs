@@ -6,8 +6,9 @@
 <script src="/socket.io/socket.io.js"></script>
 <div id = "container">
   <h1>In Game</h1>
-  <h4>room number:</h4>
-  <h4 id="roomno"></h4>
+  <p id="user"><%= user%></p>
+  <h4>room number: <span id="roomno"></span></h4>
+  <!--<h4 id="roomno"></h4>-->
   <a href="/logout">Logout</a><br/>
 
   <div id="board" style="width: 400px; margin-top: 30px"></div>
@@ -26,6 +27,7 @@
   var roomno = values[1];
   document.getElementById('roomno').innerHTML = values[1];
 
+  var usr = document.getElementById('user').innerHTML;
 
   $(function(){
       var socket = io.connect();
@@ -42,10 +44,12 @@
 
 
 
+
       var onDragStart = function(source, piece, position, orientation) {
         if (game.game_over() === true ||
             (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-            (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+            (game.turn() === 'b' && piece.search(/^w/) !== -1)){
+
           return false;
         }
 
@@ -128,6 +132,7 @@
       };
 
       board = ChessBoard('board', cfg);
+
 
       socket.on('load', function(data) {
         board.position(data.fen);
