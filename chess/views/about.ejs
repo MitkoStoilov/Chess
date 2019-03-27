@@ -88,7 +88,6 @@
 
 
       var updateStatus = function() {
-
         var status = '';
 
         var moveColor = 'White';
@@ -96,16 +95,13 @@
           moveColor = 'Black';
         }
 
-
         if (game.in_checkmate() === true) {
           status = 'Game over, ' + moveColor + ' is in checkmate.';
         }
 
-
         else if (game.in_draw() === true) {
           status = 'Game over, drawn position';
         }
-
 
         else {
           status = moveColor + ' to move';
