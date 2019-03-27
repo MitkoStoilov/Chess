@@ -10,15 +10,6 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
-/*var Game = require('./models/game');
-
-mongoose.connect('mongodb://localhost/chess');
-var db = mongoose.connection;
-
-db.once('open', function(){
-  console.log('Conected to mongodb...');
-})*/
-
 app.use(session({secret: 'awesome'}));
 
 app.use(bodyParser.json());
@@ -85,7 +76,6 @@ app.get('/', function(req, res){
 
 app.post('/login',function(req, res){
 	req.session.email = req.body.email;
-//	req.session.password = req.body.pass;
   users.push(req.session.email);
 	res.end('done');
 });
@@ -113,9 +103,7 @@ io.sockets.on('connection', function(socket){
 
   socket.on('connectToRoom', function(data){
     socket.join("room-"+data);
-    //console.log(data);
     var index=data-1;
-    //console.log(games[index].gamestate);
     io.sockets.in("room-"+data).emit('load', {
       fen: games[index].gamestate
     });
