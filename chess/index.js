@@ -62,7 +62,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.set('view engine', 'ejs');
 
-
+var connections = [];
 var roomno=1;
 var player;
 server.listen(process.env.PORT || 3000);
@@ -71,37 +71,33 @@ console.log('Server running on port 3000...');
 app.get('/', function(req, res){
   var ingame = false;
   if(req.session.email) {
-    GameModel
-      .find({
-        player1, player2: req.session.email
-      })
-      .then(doc =>{
-        res.redirect('/game/?roomno='+GameModel.select({firstName: true}));
-        player = games[i].player1;
-        ingame = true;
-      })
-    if(req.session.email===games[i].player1){
-
-    } else if(req.session.email===games[i].player2){
-      res.redirect('/game/?roomno='+games[i].roomno);
-      player = games[i].player2;
-      ingame = true;
-    }
-    
-    if(ingame === false){
-      res.render('index',{
-        games: games,
-        users: users
-      });
-    }
-  } else {
+    GameModel.find({player1: req.session.email}, function(err, results){
+      if (err) throw err;
+      if (!results.length) {
+        GameModel.find({player2: req.session.email}, function(err, results){
+          if (err) throw err;
+          if (!results.length) {
+            console.log("Nothing");
+            res.render('index');
+          } else {
+            console.log(results);
+            res.redirect('/game/?roomno='+results[0].roomno);
+          }
+        });
+      } else {
+        console.log(results);
+        res.redirect('/game/?roomno='+results[0].roomno);
+      }
+    });
+  }else {
     res.render('login.ejs', {layout:false});
   }
+
+
 });
 
 app.post('/login',function(req, res){
 	req.session.email = req.body.email;
-  users.push(req.session.email);
 	res.end('done');
 });
 
@@ -112,7 +108,6 @@ app.get('/game/', function(req, res){
 });
 
 app.get('/logout',function(req,res){
-  users.splice(users.indexOf(req.session.email), 1);
 	req.session.destroy(function(err) {
 		if(err) {
 			console.log(err);
@@ -128,9 +123,12 @@ io.sockets.on('connection', function(socket){
 
   socket.on('connectToRoom', function(data){
     socket.join("room-"+data);
-    var index=data-1;
-    io.sockets.in("room-"+data).emit('load', {
-      fen: games[index].gamestate
+    var index=data;
+    GameModel.findOne({roomno: index}, function(err, results){
+      var fen = results.gamestate;
+      io.sockets.in("room-"+data).emit('load', {
+        fen: fen
+      });
     });
   });
 
@@ -140,8 +138,11 @@ io.sockets.on('connection', function(socket){
   });
 
   socket.on('make a move', function(data){
-    var index=data.num-1;
-    games[index].gamestate = data.fen;
-    io.sockets.in("room-"+data.num).emit('new move', data.fen);
+    var index=data.num;
+    GameModel.findOne({roomno: index}, function(err, results){
+      results.gamestate = data.fen;
+      results.save();
+      io.sockets.in("room-"+data.num).emit('new move', data.fen);
+    });
   });
 });
