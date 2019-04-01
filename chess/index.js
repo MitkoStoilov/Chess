@@ -4,7 +4,43 @@ var path = require('path');
 var expressLayouts = require('express-ejs-layouts');
 var cors = require('cors');
 var session = require('express-session');
+
 var mongoose = require('mongoose');
+const database = 'chess';
+
+class Database {
+  constructor() {
+    this._connect()
+  }
+_connect() {
+     mongoose.connect(`mongodb://localhost/${database}`, {useNewUrlParser: true})
+       .then(() => {
+         console.log('Database connection successful')
+       })
+       .catch(err => {
+         console.error('Database connection error')
+       })
+  }
+}
+module.exports = new Database()
+
+let GameModel = require('./models/game.js');
+
+/*let roomex = new GameModel({ //Saving new documents to the DB
+  roomno:3,
+  player1:'tsenko',
+  player2:'proba',
+  gamestate:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+})
+roomex.save()
+   .then(doc => {
+     console.log(doc)
+   })
+   .catch(err => {
+     console.error(err)
+   })
+*/
+
 
 var app = express();
 var server = require('http').createServer(app);
@@ -26,23 +62,6 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.set('view engine', 'ejs');
 
-users = [];
-connections = [];
-
-var games = [
-  {
-    roomno: 1,
-    gamestate: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    player1: "mitko",
-    player2: "pesho"
-  },
-  {
-    roomno: 2,
-    gamestate: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    player1: "tisho",
-    player2: "misho"
-  }
-];
 
 var roomno=1;
 var player;
@@ -52,17 +71,23 @@ console.log('Server running on port 3000...');
 app.get('/', function(req, res){
   var ingame = false;
   if(req.session.email) {
-    for(var i = 0; i < games.length; i++){
-      if(req.session.email===games[i].player1){
-        res.redirect('/game/?roomno='+games[i].roomno);
+    GameModel
+      .find({
+        player1, player2: req.session.email
+      })
+      .then(doc =>{
+        res.redirect('/game/?roomno='+GameModel.select({firstName: true}));
         player = games[i].player1;
         ingame = true;
-      } else if(req.session.email===games[i].player2){
-        res.redirect('/game/?roomno='+games[i].roomno);
-        player = games[i].player2;
-        ingame = true;
-      }
+      })
+    if(req.session.email===games[i].player1){
+
+    } else if(req.session.email===games[i].player2){
+      res.redirect('/game/?roomno='+games[i].roomno);
+      player = games[i].player2;
+      ingame = true;
     }
+    
     if(ingame === false){
       res.render('index',{
         games: games,

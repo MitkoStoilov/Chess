@@ -1,18 +1,32 @@
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-let gameSchema = mongoose.Schema({
+let gameSchema = new Schema({
   roomno:{
     type: Number,
-    required: true
+    required: true,
+    unique: true
+    
   },
   player1:{
-    type: Srting,
-    required: true
+    type: String,
+    required: true,
+    unique: true
+    
   },
   player2:{
-    type: Srting,
+    type: String,
+    required: true,
+    unique: true
+  },
+  gamestate:{
+    type: String,
     required: true
   }
 });
 
-var Game = module.exports = mongoose.model('Game', gameSchema);
+module.exports = mongoose.model('Game', gameSchema);
+
+/*var Game = mongoose.model('Game', gameSchema);
+module.exports = {GameModel : Game, connection : mongoose.connection};*/
+
