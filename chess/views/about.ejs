@@ -99,17 +99,23 @@
           status = 'Game over, ' + moveColor + ' is in checkmate.';
         }
 
+        else if(game.in_threefold_repetition()){
+          status = 'Game draw due to threefolded repetition';
+        }
+
+        else if(game.insufficient_material()){
+          status = 'Game over due to insufficient material';
+        }
+
         else if (game.in_draw() === true) {
           status = 'Game over, drawn position';
         }
 
         else {
           status = moveColor + ' to move';
-
-
-        if (game.in_check() === true) {
-          status += ', ' + moveColor + ' is in check';
-        }
+          if (game.in_check() === true) {
+            status += ', ' + moveColor + ' is in check';
+          }
       }
 
         statusEl.html(status);
