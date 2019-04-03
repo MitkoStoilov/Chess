@@ -40,18 +40,18 @@
         game = new Chess(),
         statusEl = $('#status'),
         fenEl = $('#fen'),
-        pgnEl = $('#pgn'),
-        user = $('#user'),
-        white = $('#white'),
-        black = $('#black');
+        pgnEl = $('#pgn');
+      const user = $('#user').text(),
+        white = $('#white').text(),
+        black = $('#black').text();
 
       var onDragStart = function(source, piece, position, orientation) {
         if (game.game_over() === true ||
-            (user.text() === white.text() && piece.search(/^b/) !== -1) ||
-            (user.text() === black.text() && piece.search(/^w/) !== -1)){
+            (user === white && piece.search(/^b/) !== -1) ||
+            (user === black && piece.search(/^w/) !== -1)){
 
           return false;
-        }else if(user.text() !== white.text() && user.text() !== black.text()){
+        }else if(user !== white && user !== black){
           return false;
         }
 
@@ -141,7 +141,7 @@
       socket.on('load', function(data) {
         board.position(data.fen);
         game.load(data.fen);
-        if(data.player1 !== user.text()){
+        if(data.player1 !== user){
           board.flip();
         }
         updateStatus();
