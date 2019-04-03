@@ -51,7 +51,7 @@
             (user.text() === black.text() && piece.search(/^w/) !== -1)){
 
           return false;
-        }else{
+        }else if(user.text() !== white.text() && user.text() !== black.text()){
           return false;
         }
 
