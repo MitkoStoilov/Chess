@@ -20,16 +20,16 @@ router.get('/', function(req, res){
         GameModel.find({player2: req.session.email}, function(err, results){
           if (err) throw err;
           if (!results.length) {
-            console.log("Nothing");
+            //console.log("Nothing");
             res.render('index');
           } else {
-            console.log(results);
-            res.redirect('/game/?roomno='+results[0].roomno);
+            //console.log(results);
+            res.redirect('/game/'+results[0].player1+'/'+results[0].player2+'/?roomno='+results[0].roomno);
           }
         });
       } else {
         //console.log(results);
-        res.redirect('/game/?roomno='+results[0].roomno);
+        res.redirect('/game/'+results[0].player1+'/'+results[0].player2+'/?roomno='+results[0].roomno);
       }
     });
   }else {

@@ -5,10 +5,10 @@
 <script src="/js/chess.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <div id = "container">
-  <h1>In Game</h1>
   <p id="user"><%= user%></p>
-  <h4>room number: <span id="roomno"></span></h4>
-  <!--<h4 id="roomno"></h4>-->
+  <p><b>white:</b> <span id="white"><%= white%></span></p>
+  <p><b>black:</b> <span id="black"><%= black%></span></p>
+  <p>room number: <b><span id="roomno"></span></b></p>
   <a href="/logout">Logout</a><br/>
 
   <div id="board" style="width: 400px; margin-top: 30px"></div>
@@ -40,15 +40,15 @@
         game = new Chess(),
         statusEl = $('#status'),
         fenEl = $('#fen'),
-        pgnEl = $('#pgn');
-
-
-
+        pgnEl = $('#pgn'),
+        user = $('#user'),
+        white = $('#white'),
+        black = $('#black');
 
       var onDragStart = function(source, piece, position, orientation) {
         if (game.game_over() === true ||
-            (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-            (game.turn() === 'b' && piece.search(/^w/) !== -1)){
+            (user.text() === white.text() && piece.search(/^b/) !== -1) ||
+            (user.text() === black.text() && piece.search(/^w/) !== -1)){
 
           return false;
         }
@@ -127,16 +127,24 @@
         onSnapEnd: onSnapEnd
       };
 
-      board = ChessBoard('board', cfg);
 
+      board = ChessBoard('board', cfg);
 
       socket.on('load', function(data) {
         board.position(data.fen);
         game.load(data.fen);
+        if(data.player1 !== user.text()){
+          board.flip();
+        }
         updateStatus();
       });
 
-      $('#flipOrientationBtn').on('click', board.flip);
+
+
+
+      $('#flipOrientationBtn').on('click', function(){
+        board.flip();
+      });
 
       updateStatus();
     });

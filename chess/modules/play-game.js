@@ -16,8 +16,10 @@ exports.playGame = function(){
       var index=data;
       GameModel.findOne({roomno: index}, function(err, results){
         var fen = results.gamestate;
+        var player1 = results.player1;
         io.sockets.in("room-"+data).emit('load', {
-          fen: fen
+          fen: fen,
+          player1: player1
         });
       });
     });
