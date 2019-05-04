@@ -11,6 +11,7 @@ var play = require('./modules/play-game.js');
 var logoutRouter = require('./routes/logout');
 var indexRouter = require('./routes/index');
 var gameRouter = require('./routes/game');
+var queryRouter = require('./routes/query');
 
 s.app.use(session({secret: 'awesome'}));
 s.app.use(bodyParser.json());
@@ -29,6 +30,7 @@ s.app.set('view engine', 'ejs');
 s.app.use('/', indexRouter);
 s.app.use('/logout', logoutRouter);
 s.app.use('/game', gameRouter);
+s.app.use('/query', queryRouter);
 
 play.playGame();
 
