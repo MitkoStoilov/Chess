@@ -19,7 +19,7 @@ exports.playGame = function(){
       if(waiting.length % 2 === 0){
         //Saving new game to the DB
         let roomex = new GameModel({
-          roomno:7,
+          roomno:roomno,
           player1:waiting[0],
           player2:waiting[1],
           gamestate:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
@@ -35,9 +35,12 @@ exports.playGame = function(){
         io.sockets.emit('startGame', {
           player1: waiting[0],
           player2: waiting[1],
-          roomno: 7
+          roomno: roomno
         });
 
+        roomno++;
+        waiting.shift();
+        waiting.shift();
       }
     });
 
