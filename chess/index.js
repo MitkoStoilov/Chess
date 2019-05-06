@@ -30,7 +30,7 @@ s.app.set('view engine', 'ejs');
 s.app.use('/', indexRouter);
 s.app.use('/logout', logoutRouter);
 s.app.use('/game', gameRouter);
-s.app.use('/query', queryRouter);
+s.app.use('/query', queryRouter.router);
 
 play.playGame();
 

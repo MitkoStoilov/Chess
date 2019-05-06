@@ -1,1 +1,27 @@
-<h1>Please wait<h1>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<div id = "container">
+  <h1>Please wait</h1>
+  <p id="name"><%= name%></p>
+</div>
+
+
+<script type="text/javascript">
+
+  const name = $('#name').text();
+  $(function(){
+      var socket = io.connect();
+      socket.emit('wait', {name: name});
+
+      socket.on('startGame', function(data){
+        $.post("http://localhost:3000/query", function(d) {
+            if(d==='done') {
+                //window.location.href="/game/" + data.player1 + "/" + data.player1 "/?roomno=" + data.roomno;
+                window.location.href="/game/" + data.player1 + "/" + data.player2 + "/?roomno=" + 7;
+            }
+        });
+      });
+  });
+
+</script>

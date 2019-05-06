@@ -5,11 +5,27 @@ const model = require('../models/game.js');
 const GameModel = model.GameModel;
 
 exports.playGame = function(){
+  var waiting = [];
+
   var connections = [];
   var roomno=1;
   io.sockets.on('connection', function(socket){
     connections.push(socket);
     console.log('Connected: %s sockets connected', connections.length);
+
+    socket.on('wait', function(data){
+      waiting.push(data.name);
+      console.log(waiting.length);
+      if(waiting.length % 2 === 0){
+        console.log(data.name);
+        io.sockets.emit('startGame', {
+          player1: waiting[0],
+          player2: waiting[1],
+          roomno: roomno
+        });
+
+      }
+    });
 
     socket.on('connectToRoom', function(data){
       socket.join("room-"+data);
