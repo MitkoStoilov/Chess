@@ -17,11 +17,25 @@ exports.playGame = function(){
       waiting.push(data.name);
       console.log(waiting.length);
       if(waiting.length % 2 === 0){
-        console.log(data.name);
+        //Saving new game to the DB
+        let roomex = new GameModel({
+          roomno:7,
+          player1:waiting[0],
+          player2:waiting[1],
+          gamestate:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+        });
+        roomex.save()
+           .then(doc => {
+             console.log(doc)
+           })
+           .catch(err => {
+             console.error(err)
+           });
+
         io.sockets.emit('startGame', {
           player1: waiting[0],
           player2: waiting[1],
-          roomno: roomno
+          roomno: 7
         });
 
       }

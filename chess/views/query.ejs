@@ -17,8 +17,7 @@
       socket.on('startGame', function(data){
         $.post("http://localhost:3000/query", function(d) {
             if(d==='done') {
-                //window.location.href="/game/" + data.player1 + "/" + data.player1 "/?roomno=" + data.roomno;
-                window.location.href="/game/" + data.player1 + "/" + data.player2 + "/?roomno=" + 7;
+                window.location.href="/game/" + data.player1 + "/" + data.player2 + "/?roomno=" + data.roomno;
             }
         });
       });
