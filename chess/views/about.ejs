@@ -57,6 +57,30 @@
 
       };
 
+      var calcElo = function(elo1, elo2, result){
+        const points1, points2;
+        if(result == 1){
+          points1 = 1;
+          points2 = 0;
+        }else if(result == 0){
+          points1 = 0;
+          points2 = 0;
+        }else{
+          points1 = points2 = 0,5;
+        }
+
+        const Kfactor = 32;
+        const Qa = (10**(elo1/400));
+        const Qb = (10**(elo2/400));
+
+        const ExcpectedScore1 = Qa/(Qa+Qb);
+        const ExcpectedScore2 = Qb/(Qa+Qb);
+
+        elo1 = elo1 + Kfacotr*(points1 - ExcpectedScore1);
+        elo2 = elo2 + Kfacotr*(points2 - ExcpectedScore2);
+
+      }
+
 
       var onDrop = function(source, target) {
 
@@ -74,13 +98,9 @@
 
       };
 
-
       var onSnapEnd = function() {
         board.position(game.fen());
       };
-
-
-
 
       socket.on('new move', function(data){
         board.position(data);
@@ -148,13 +168,13 @@
       });
 
 
-
-
       $('#flipOrientationBtn').on('click', function(){
         board.flip();
       });
 
       updateStatus();
     });
+
+
 
 </script>
