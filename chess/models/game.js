@@ -10,7 +10,7 @@ class Database {
 _connect() {
      mongoose.connect(`mongodb://localhost/${database}`, {useNewUrlParser: true})
        .then(() => {
-         console.log('Database connection successful')
+         console.log('Database connection from game.js successful')
        })
        .catch(err => {
          console.error('Database connection error')
@@ -47,3 +47,4 @@ let gameSchema = new Schema({
 
 var Game = mongoose.model('Game', gameSchema);
 module.exports = {GameModel : Game, connection : mongoose.connection, t :'hi'};
+
