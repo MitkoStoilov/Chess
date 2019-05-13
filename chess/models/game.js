@@ -40,6 +40,10 @@ let gameSchema = new Schema({
   gamestate:{
     type: String,
     required: true
+  },
+
+  moves:{
+    type: String
   }
 });
 
@@ -47,4 +51,3 @@ let gameSchema = new Schema({
 
 var Game = mongoose.model('Game', gameSchema);
 module.exports = {GameModel : Game, connection : mongoose.connection, t :'hi'};
-

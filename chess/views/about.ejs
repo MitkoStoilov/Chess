@@ -16,7 +16,7 @@
   <div id="game_data">
     <p>Status: <span id="status"></span></p>
     <p>FEN: <span id="fen"></span></p>
-  <!--  <p>PGN: <span id="pgn"></span></p>-->
+    <p>Moves: <span id="pgn"></span></p>
     <input type="button" id="flipOrientationBtn" value="Flip orientation" />
   </div>
 </div>
@@ -39,8 +39,8 @@
       var board,
         game = new Chess(),
         statusEl = $('#status'),
-        fenEl = $('#fen'),
-        pgnEl = $('#pgn');
+        fenEl = $('#fen');
+        movesEl = $('#pgn');
       const user = $('#user').text(),
         white = $('#white').text(),
         black = $('#black').text();
@@ -57,7 +57,7 @@
 
       };
 
-      var calcElo = function(elo1, elo2, result){
+      /*var calcElo = function(elo1, elo2, result){
         const points1, points2;
         if(result == 1){
           points1 = 1;
@@ -79,7 +79,7 @@
         elo1 = elo1 + Kfacotr*(points1 - ExcpectedScore1);
         elo2 = elo2 + Kfacotr*(points2 - ExcpectedScore2);
 
-      }
+      }*/
 
 
       var onDrop = function(source, target) {
@@ -91,8 +91,9 @@
         });
 
         if (move === null) return 'snapback';
-
-        socket.emit('make a move', {fen: game.fen(), num: roomno});
+        //alert(move.from + move.to);
+        socket.emit('make a move', {fen: game.fen(), move: move, num: roomno});
+        //socket.emit('make a move', {fen: game.fen(), num: roomno});
 
         updateStatus();
 
@@ -102,9 +103,14 @@
         board.position(game.fen());
       };
 
+      var moves = [];
       socket.on('new move', function(data){
-        board.position(data);
-        game.load(data);
+
+        board.move(data.move.from+'-'+data.move.to);
+        moves.push(data.move.from+'-'+data.move.to + "; ");
+        movesEl.html(data.moves);
+
+        game.load(data.fen);
         updateStatus();
       });
 
@@ -142,7 +148,7 @@
 
         statusEl.html(status);
         fenEl.html(game.fen());
-        pgnEl.html(game.pgn());
+        //pgnEl.html(game.pgn());
       };
 
 
@@ -164,6 +170,7 @@
         if(data.player1 !== user){
           board.flip();
         }
+        movesEl.html(data.moves);
         updateStatus();
       });
 

@@ -22,7 +22,8 @@ exports.playGame = function(){
           roomno:roomno,
           player1:waiting[0],
           player2:waiting[1],
-          gamestate:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+          gamestate:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+          moves:""
         });
         roomex.save()
            .then(doc => {
@@ -50,9 +51,11 @@ exports.playGame = function(){
       GameModel.findOne({roomno: index}, function(err, results){
         var fen = results.gamestate;
         var player1 = results.player1;
+        var moves = results.moves;
         io.sockets.in("room-"+data).emit('load', {
           fen: fen,
-          player1: player1
+          player1: player1,
+          moves: moves
         });
       });
     });
@@ -61,8 +64,11 @@ exports.playGame = function(){
       var index=data.num;
       GameModel.findOne({roomno: index}, function(err, results){
         results.gamestate = data.fen;
+        results.moves += data.move.from +'-'+data.move.to+"; ";
+        var moves = results.moves;
         results.save();
-        io.sockets.in("room-"+data.num).emit('new move', data.fen);
+
+        io.sockets.in("room-"+data.num).emit('new move', {fen:data.fen, move:data.move, moves: moves});
       });
     });
 
