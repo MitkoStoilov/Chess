@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 
+const passport = require('passport');
+
+
 var User = require('../models/profile');
 
 router.get('/register', function(req, res){
@@ -45,12 +48,23 @@ router.post('/register', function(req, res){
               console.log(err);
               return;
             } else {
-              res.redirect('/');
+              res.redirect('/users/login');
             }
           });
         });
     });
   //}
 });
+
+router.get('/login', function(req, res){
+  res.render('login.ejs', {layout:false});
+});
+
+router.post('/login',function(req,res,next){
+  next();
+}, passport.authenticate('local', {
+    successRedirect:'/',
+    failureRedirect:'/users/login'
+}));
 
 module.exports = router;

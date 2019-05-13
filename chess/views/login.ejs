@@ -1,23 +1,9 @@
-<input type="text" size="40" placeholder="Type your email" id="email"><br />
-<input type="password" size="40" placeholder="Type your password" id="password"><br />
-<input type="button" value="Submit" id="submit">
+<form method='POST' action="/users/login">
+  <input type="text" size="40" placeholder="Type your email" id="email" name="username"><br />
+  <br>
+  <input type="password" size="40" placeholder="Type your password" id="password" name="password"><br />
+  <br>
+  <input type="submit" value="Submit">
+</form>
+<br>
 <a href="/users/register">Register</a>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script>
-        $(document).ready(function(){
-            var email, password;
-            $("#submit").click(function(){
-                email = $("#email").val();
-              //  password = $("#password").val();
-
-                $.post("http://localhost:3000/login", {
-                    email: email,
-                  //  pass: password
-                }, function(data) {
-                    if(data==='done') {
-                        window.location.href="/";
-                    }
-                });
-            });
-        });
-</script>

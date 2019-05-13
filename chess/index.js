@@ -4,15 +4,22 @@ var path = require('path');
 var expressLayouts = require('express-ejs-layouts');
 var cors = require('cors');
 var session = require('express-session');
+var passport = require('passport');
 
 var s = require('./modules/server.js');
 var play = require('./modules/play-game.js');
+
+var config = require('./config/database');
 
 var logoutRouter = require('./routes/logout');
 var indexRouter = require('./routes/index');
 var gameRouter = require('./routes/game');
 var queryRouter = require('./routes/query');
 var userRouter = require('./routes/users');
+
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('./models/profile');
+const bcrypt = require('bcryptjs');
 
 s.app.use(session({secret: 'awesome'}));
 s.app.use(bodyParser.json());
@@ -27,6 +34,12 @@ s.app.use('/js', express.static('js'));
 
 s.app.set('views', path.join(__dirname, 'views'));
 s.app.set('view engine', 'ejs');
+
+
+s.app.use(passport.initialize());
+s.app.use(passport.session());
+require('./config/passport')(passport);
+
 
 s.app.use('/', indexRouter);
 s.app.use('/logout', logoutRouter);

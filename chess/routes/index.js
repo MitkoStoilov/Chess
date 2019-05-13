@@ -11,9 +11,9 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 
-router.get('/', function(req, res){
+router.get('/',function(req, res){
   var ingame = false;
-  if(req.session.email) {
+  /*if(req.session.email) {
     GameModel.find({player1: req.session.email}, function(err, results){
       if (err) throw err;
       if (!results.length) {
@@ -33,13 +33,11 @@ router.get('/', function(req, res){
       }
     });
   }else {
-    res.render('login.ejs', {layout:false});
-  }
+    res.redirect('/users/register');
+  }*/
+  res.render('index');
 });
 
-router.post('/login',function(req, res){
-	req.session.email = req.body.email;
-	res.end('done');
-});
+
 
 module.exports = router;
