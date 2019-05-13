@@ -16,6 +16,7 @@ var indexRouter = require('./routes/index');
 var gameRouter = require('./routes/game');
 var queryRouter = require('./routes/query');
 var userRouter = require('./routes/users');
+var profileRouter = require('./routes/profile');
 
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/profile');
@@ -46,6 +47,7 @@ s.app.use('/logout', logoutRouter);
 s.app.use('/game', gameRouter);
 s.app.use('/query', queryRouter.router);
 s.app.use('/users', userRouter);
+s.app.use('/profile', profileRouter);
 
 play.playGame();
 
