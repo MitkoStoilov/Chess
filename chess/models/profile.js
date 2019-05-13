@@ -52,6 +52,17 @@ let userSchema = new Schema({
 
     elo:{
         type:Number
+    },
+    games:{
+      player1: {
+        type:String
+      },
+      player2: {
+        type:String
+      },
+      moves: {
+        type:String
+      }
     }
 
 });

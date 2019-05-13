@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="/css/chessboard-0.3.0.min.css">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="/js/chessboard-0.3.0.min.js"></script>
+<script src="/js/chess.js"></script>
+
+<div id = "container">
+  <a href="/profile">Profile</a><br/>
+  <p id="player1">White: <%= player1%></p>
+  <p id="player2">Black: <%= player2%></p>
+  <p>Moves: <span id="moves"><%= moves%></span></p>
+</div>
+<div id="board" style="width: 400px"></div>
+<input type="button" id="startPositionBtn" value="Start Position" />
+<input type="button" id="move1Btn" value="forward" />
+<input type="button" id="move2Btn" value="backword" />
+
+<script type="text/javascript">
+
+  const movesEl = $('#moves').text();
+  var moves = movesEl.split("; ");
+  var count = 0;
+  var board = ChessBoard('board', 'start');
+
+  $('#startPositionBtn').on('click', function(){
+    board.start();
+    count = 0;
+  });
+
+  $('#move1Btn').on('click', function() {
+    if(count < moves.length){
+      board.move(moves[count]);
+      count++;
+    }
+  });
+
+  $('#move2Btn').on('click', function() {
+    if(count > 0){
+      board.move(moves[count]);
+      count--;
+    }
+  });
+</script>

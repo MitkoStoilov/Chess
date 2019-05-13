@@ -18,8 +18,10 @@ router.get('/:white/:black', function(req, res){
     black: req.params.black
   });
 });
-
+var count = 0;
 router.post('/:white/:black', function(req, res){
+  count++;
+  var game
   var winner = req.body.winner;
   console.log(winner);
   User.findOne({email: req.session.email}, function(err, user){
@@ -31,9 +33,21 @@ router.post('/:white/:black', function(req, res){
     user.save();
   });
 
-  GameModel.findOneAndRemove({roomno: req.body.roomno}, function(err, result){});
-
-
+  GameModel.findOne({roomno: req.body.roomno}, function(err, result){
+    if(result){
+      User.findOne({email: req.session.email}, function(err, user){
+        user.games.player1 = result.player1;
+        user.games.player2 = result.player2;
+        user.games.moves = result.moves;
+        user.save();
+      });
+    }
+  });
+  if(count % 2 == 0){
+    GameModel.findOneAndRemove({roomno: req.body.roomno}, function(err, result){
+        if (err) throw err;
+    });
+  }
   res.end('done');
 
 });

@@ -17,6 +17,7 @@ var gameRouter = require('./routes/game');
 var queryRouter = require('./routes/query');
 var userRouter = require('./routes/users');
 var profileRouter = require('./routes/profile');
+var oldGamesRouter = require('./routes/old');
 
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/profile');
@@ -48,6 +49,7 @@ s.app.use('/game', gameRouter);
 s.app.use('/query', queryRouter.router);
 s.app.use('/users', userRouter);
 s.app.use('/profile', profileRouter);
+s.app.use('/old', oldGamesRouter);
 
 play.playGame();
 
