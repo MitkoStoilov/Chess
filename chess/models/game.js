@@ -50,4 +50,4 @@ let gameSchema = new Schema({
 //module.exports = mongoose.model('Game', gameSchema);
 
 var Game = mongoose.model('Game', gameSchema);
-module.exports = {GameModel : Game, connection : mongoose.connection, t :'hi'};
+module.exports = {GameModel : Game, connection : mongoose.connection};

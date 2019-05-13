@@ -12,6 +12,7 @@ var logoutRouter = require('./routes/logout');
 var indexRouter = require('./routes/index');
 var gameRouter = require('./routes/game');
 var queryRouter = require('./routes/query');
+var userRouter = require('./routes/users');
 
 s.app.use(session({secret: 'awesome'}));
 s.app.use(bodyParser.json());
@@ -31,6 +32,7 @@ s.app.use('/', indexRouter);
 s.app.use('/logout', logoutRouter);
 s.app.use('/game', gameRouter);
 s.app.use('/query', queryRouter.router);
+s.app.use('/users', userRouter);
 
 play.playGame();
 

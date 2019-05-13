@@ -3,7 +3,7 @@ const database = 'chess';
 
 var Schema = mongoose.Schema;
 
-/*class Database {
+class Database {
     constructor() {
       this._connect()
     }
@@ -17,36 +17,29 @@ var Schema = mongoose.Schema;
          })
     }
   }
-  module.exports = new Database()class Database {
-  constructor() {
-    this._connect()
-  }
-_connect() {
-     mongoose.connect(`mongodb://localhost/${database}`, {useNewUrlParser: true})
-       .then(() => {
-         console.log('Database connection from game.js successful')
-       })
-       .catch(err => {
-         console.error('Database connection error')
-       })
-  }
-}
-module.exports = new Database()
-*/
 
-let profileSchema = new Schema({
+module.exports = new Database()
+
+
+let userSchema = new Schema({
+
+    email:{
+        type:String,
+        required:true,
+        unique:true
+    },
+
     name:{
         type:String,
         required:true,
         unique:true
     },
 
-    /*password:{
+    password:{
         type:String,
         required:true,
         unique:true
-    }*/
-    //Do we need pass for now?
+    },
 
     victories:{
         type:Number
@@ -58,9 +51,25 @@ let profileSchema = new Schema({
 
     elo:{
         type:Number
-    }
+    },
+
+    games:[{
+      id:{
+        type:String
+      },
+      moves:{
+        type:String
+      },
+      player1:{
+        type:String
+      },
+      player2:{
+        type:String
+      }
+
+    }]
 
 });
 
-var Profile = mongoose.model('Profile', gameSchema);
-module.exports = {ProfileModel : Profile, connection : mongoose.connection, t :'hi'};
+var User = mongoose.model('User', userSchema);
+module.exports = User;
