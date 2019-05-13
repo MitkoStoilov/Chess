@@ -43,6 +43,8 @@ router.post('/register', function(req, res){
             console.log(err);
           }
           newUser.password = hash;
+          newUser.victories = 0;
+          newUser.losses = 0;
           newUser.save(function(err){
             if(err){
               console.log(err);

@@ -10,6 +10,7 @@
   <p><b>black:</b> <span id="black"><%= black%></span></p>
   <p>room number: <b><span id="roomno"></span></b></p>
   <a href="/logout">Logout</a><br/>
+  <a href="/">Home</a>
 
   <div id="board" style="width: 400px; margin-top: 30px"></div>
 
@@ -35,15 +36,24 @@
       socket.emit('connectToRoom', roomno);
 
       var fen;
-
+      var winner;
       var board,
         game = new Chess(),
         statusEl = $('#status'),
-        fenEl = $('#fen');
+        fenEl = $('#fen'),
         movesEl = $('#pgn');
       const user = $('#user').text(),
         white = $('#white').text(),
         black = $('#black').text();
+
+        var endGame = function(){
+          $.post("http://localhost:3000/game/"+white+"/"+black+"/?roomno="+roomno, {
+            white: white,
+            black: black,
+            roomno: roomno,
+            winner: winner
+          });
+        }
 
       var onDragStart = function(source, piece, position, orientation) {
         if (game.game_over() === true ||
@@ -81,7 +91,6 @@
 
       }*/
 
-
       var onDrop = function(source, target) {
 
         var move = game.move({
@@ -91,11 +100,8 @@
         });
 
         if (move === null) return 'snapback';
-        //alert(move.from + move.to);
-        socket.emit('make a move', {fen: game.fen(), move: move, num: roomno});
-        //socket.emit('make a move', {fen: game.fen(), num: roomno});
 
-        updateStatus();
+        socket.emit('make a move', {fen: game.fen(), move: move, num: roomno});
 
       };
 
@@ -125,18 +131,27 @@
 
         if (game.in_checkmate() === true) {
           status = 'Game over, ' + moveColor + ' is in checkmate.';
+          if(moveColor == 'White'){
+            winner = black;
+          } else {
+            winner = white;
+          }
+          endGame();
         }
 
         else if(game.in_threefold_repetition()){
           status = 'Game draw due to threefolded repetition';
+          endGame();
         }
 
         else if(game.insufficient_material()){
           status = 'Game over due to insufficient material';
+          endGame();
         }
 
         else if (game.in_draw() === true) {
           status = 'Game over, drawn position';
+          endGame();
         }
 
         else {
@@ -148,7 +163,6 @@
 
         statusEl.html(status);
         fenEl.html(game.fen());
-        //pgnEl.html(game.pgn());
       };
 
 
@@ -171,7 +185,6 @@
           board.flip();
         }
         movesEl.html(data.moves);
-        updateStatus();
       });
 
 
@@ -179,9 +192,5 @@
         board.flip();
       });
 
-      updateStatus();
     });
-
-
-
 </script>

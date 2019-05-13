@@ -44,10 +44,14 @@ let gameSchema = new Schema({
 
   moves:{
     type: String
+  },
+  
+  winner:{
+    type: String
   }
 });
 
 //module.exports = mongoose.model('Game', gameSchema);
 
 var Game = mongoose.model('Game', gameSchema);
-module.exports = {GameModel : Game, connection : mongoose.connection};
+module.exports = {GameModel : Game, connection : mongoose.connection, gameSchema: gameSchema};
