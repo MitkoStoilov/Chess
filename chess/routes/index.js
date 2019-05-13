@@ -13,7 +13,7 @@ mongoose.set('useCreateIndex', true);
 
 router.get('/',function(req, res){
   var ingame = false;
-  /*if(req.session.email) {
+  if(req.session.email) {
     GameModel.find({player1: req.session.email}, function(err, results){
       if (err) throw err;
       if (!results.length) {
@@ -34,8 +34,8 @@ router.get('/',function(req, res){
     });
   }else {
     res.redirect('/users/register');
-  }*/
-  res.render('index');
+  }
+  //res.render('index');
 });
 
 
