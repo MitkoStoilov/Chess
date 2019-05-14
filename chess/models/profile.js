@@ -43,15 +43,18 @@ let userSchema = new Schema({
     },
 
     victories:{
-        type:Number
+        type:Number,
+        default: 0
     },
 
     losses:{
-        type:Number
+        type:Number,
+        default: 0
     },
 
     elo:{
-        type:Number
+        type:Number,
+        default: 0
     },
     games:{
       player1: {
