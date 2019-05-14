@@ -13,6 +13,7 @@
 <input type="button" id="startPositionBtn" value="Start Position" />
 <input type="button" id="move1Btn" value="forward" />
 <input type="button" id="move2Btn" value="backword" />
+<input type="button" id="endPositionBtn" value="End Position" />
 
 <script type="text/javascript">
 
@@ -25,6 +26,14 @@
   $('#startPositionBtn').on('click', function(){
     board.start();
     count = 0;
+  });
+
+  $('#endPositionBtn').on('click', function(){
+    for(count =0; count <moves.length; count++){
+      board.move(moves[count]);
+    }
+    count--;
+    
   });
 
   $('#move1Btn').on('click', function() {
