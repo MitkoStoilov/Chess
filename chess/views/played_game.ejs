@@ -15,34 +15,33 @@
 <input type="button" id="move2Btn" value="backword" />
 
 <script type="text/javascript">
-  
-  var game = new Chess();
-  
+
   const movesEl = $('#moves').text();
-  game.load_pgn(movesEl);
-  var history = game.history();
-  game.reset();
   var moves = movesEl.split("; ");
   var count = 0;
   var board = ChessBoard('board', 'start');
+  var game = new Chess();
 
   $('#startPositionBtn').on('click', function(){
-    game.reset();
     board.start();
     count = 0;
   });
 
   $('#move1Btn').on('click', function() {
-    count++;
-    game.move(history[count]);
-    board.position(game.fen());
+    if(count < moves.length){
+      board.move(moves[count]);
+      count++;
+    }
   });
 
   $('#move2Btn').on('click', function() {
-    if(count > 0){
+    
+  if(count > 0){
       count--;
-      game.undo();
-      board.position(game.fen());
+      var substr1 = moves[count].substr(0, 2);
+      var substr2 = moves[count].substr(3);
+      var backmove = substr2 +"-" +  substr1;
+      board.move(backmove);
     }
   });
 </script>
