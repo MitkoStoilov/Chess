@@ -112,7 +112,8 @@
       var moves = [];
       socket.on('new move', function(data){
 
-        board.move(data.move.from+'-'+data.move.to);
+      //  board.move(data.move.from+'-'+data.move.to);
+        board.position(data.fen);
         moves.push(data.move.from+'-'+data.move.to + "; ");
         movesEl.html(data.moves);
 
