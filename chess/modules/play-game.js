@@ -6,18 +6,29 @@ const GameModel = model.GameModel;
 
 exports.playGame = function(){
   var waiting = [];
-  var name;
+  var onlineUsers = [];
   var connections = [];
   var roomno=1;
   io.sockets.on('connection', function(socket){
     connections.push(socket);
     console.log('Connected: %s sockets connected', connections.length);
 
+    socket.on('join lobby', function(data){
+      socket.username = data.name;
+      if(onlineUsers.indexOf(onlineUsers.username) == -1){
+        onlineUsers.push(socket.username);
+        console.log("online:" + onlineUsers.length);
+        updateUsers();
+      }
+    });
+
     socket.on('wait', function(data){
-      name = data.name;
-      if(waiting.indexOf(name) == -1){
-        waiting.push(name);
-        console.log(waiting.length);
+      onlineUsers.splice(onlineUsers.indexOf(socket.username), 1);
+      console.log("online:" + onlineUsers.length);
+      if(waiting.indexOf(socket.username) == -1){
+        waiting.push(socket.username);
+        console.log("waiting:" + waiting.length);
+        updateUsers();
       }
       if(waiting.length >= 2){
         //Saving new game to the DB
@@ -45,6 +56,7 @@ exports.playGame = function(){
         roomno++;
         waiting.shift();
         waiting.shift();
+        updateUsers();
       }
     });
 
@@ -77,11 +89,21 @@ exports.playGame = function(){
 
     socket.on('disconnect', function(data){
       connections.splice(connections.indexOf(socket), 1);
-      if(waiting.indexOf(name) != -1){
-        waiting.splice(waiting.indexOf(name), 1);
-        console.log(waiting.length);
+      if(waiting.indexOf(socket.username) != -1){
+        waiting.splice(waiting.indexOf(socket.username), 1);
+        console.log("waiting:" + waiting.length);
+      }
+      if(onlineUsers.indexOf(socket.username) != -1){
+        onlineUsers.splice(onlineUsers.indexOf(socket.username), 1);
+        console.log("online:" + onlineUsers.length);
       }
       console.log('Disconnected %s sockets connected', connections.length);
+      updateUsers();
     });
+
+    function updateUsers(){
+      io.sockets.emit('get users', onlineUsers);
+    }
+
   });
 }

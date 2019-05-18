@@ -2,17 +2,25 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <div id = "container">
-  <h1>Please wait</h1>
+  <h1 id="instructions" style="display: none;">Please wait</h1>
   <p id="name"><%= name%></p>
+  <a href="/">Home</a>
+  <input type="button" id="joinBtn" value="Join queue" />
+  <h3>Online Users</h3>
+  <ul class="list-group" id="users">
+
+  </ul>
 </div>
 
 
 <script type="text/javascript">
 
   const name = $('#name').text();
+  var $users = $('#users');
   $(function(){
       var socket = io.connect();
-      socket.emit('wait', {name: name});
+
+      socket.emit('join lobby', {name: name});
 
       socket.on('startGame', function(data){
         $.post("http://localhost:3000/query", function(d) {
@@ -21,6 +29,22 @@
             }
         });
       });
+
+      socket.on('get users', function(data){
+        var html = '';
+        for(i=0; i<data.length; i++){
+          if(data[i]!=name){
+            html+='<li>'+data[i]+'</li>';
+          }
+        }
+        $users.html(html);
+      });
+
+      $('#joinBtn').on('click', function() {
+        socket.emit('wait', {name: name});
+         $('#instructions').css('display', 'block');
+      });
+
   });
 
 </script>

@@ -4,8 +4,6 @@ const config = require('../config/database');
 const bcrypt = require('bcryptjs');
 
 module.exports = function(passport){
-  console.log("Here");
-  //console.log(passport);
   passport.use(new LocalStrategy(function(email, password, done){
     var query = {email:email};
 
