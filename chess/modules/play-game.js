@@ -22,6 +22,10 @@ exports.playGame = function(){
       }
     });
 
+    socket.on('request', function(data){
+      io.sockets.emit('responce', data);
+    });
+
     socket.on('wait', function(data){
       onlineUsers.splice(onlineUsers.indexOf(socket.username), 1);
       console.log("online:" + onlineUsers.length);
@@ -32,7 +36,7 @@ exports.playGame = function(){
       }
       if(waiting.length >= 2){
         //Saving new game to the DB
-        let roomex = new GameModel({
+        var roomex = new GameModel({
           roomno:roomno,
           player1:waiting[0],
           player2:waiting[1],
@@ -58,6 +62,36 @@ exports.playGame = function(){
         waiting.shift();
         updateUsers();
       }
+    });
+
+    socket.on('challenge', function(data){
+      onlineUsers.splice(onlineUsers.indexOf(socket.username), 1);
+      onlineUsers.splice(onlineUsers.indexOf(data), 1);
+      console.log("online:" + onlineUsers.length);
+
+      var roomex = new GameModel({
+        roomno:roomno,
+        player1:socket.username,
+        player2:data,
+        gamestate:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        moves:""
+      });
+      roomex.save()
+         .then(doc => {
+           console.log(doc)
+         })
+         .catch(err => {
+           console.error(err)
+         });
+
+      io.sockets.emit('startGame', {
+        player1: socket.username,
+        player2: data,
+        roomno: roomno
+      });
+
+      roomno++;
+      updateUsers();
     });
 
     socket.on('connectToRoom', function(data){

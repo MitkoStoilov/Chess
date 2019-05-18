@@ -10,6 +10,11 @@
   <ul class="list-group" id="users">
 
   </ul>
+  <div style="display:none; background-color:black; margin-left:500px; width:300px; height:150px;" id="modal">
+    <p style="color:white;"><span id="challenger"></span> is challenging you</p>
+    <input type="button" id="accept" value="Accept" />
+    <input type="button" id="decline" value="Decline" />
+  </div>
 </div>
 
 
@@ -17,6 +22,7 @@
 
   const name = $('#name').text();
   var $users = $('#users');
+  var challenger;
   $(function(){
       var socket = io.connect();
 
@@ -24,7 +30,7 @@
 
       socket.on('startGame', function(data){
         $.post("http://localhost:3000/query", function(d) {
-            if(d==='done') {
+            if(d==='done' && (name == data.player1 || name == data.player2) ) {
                 window.location.href="/game/" + data.player1 + "/" + data.player2 + "/?roomno=" + data.roomno;
             }
         });
@@ -34,7 +40,7 @@
         var html = '';
         for(i=0; i<data.length; i++){
           if(data[i]!=name){
-            html+='<li>'+data[i]+'</li>';
+            html+='<li><a onclick="request('+ "'" + data[i] + "'" +')" href="#">'+data[i]+'</a></li>';
           }
         }
         $users.html(html);
@@ -44,6 +50,27 @@
         socket.emit('wait', {name: name});
          $('#instructions').css('display', 'block');
       });
+
+      socket.on('responce', function(data){
+          if(name == data.opponent) {
+            challenger = data.challenger;
+            $('#challenger').html(challenger);
+            $('#modal').css('display', 'block');
+          }
+      });
+
+      request = function(opponent){
+        socket.emit('request', {opponent: opponent, challenger: name});
+      }
+
+      $('#accept').on('click', function() {
+        socket.emit('challenge', challenger);
+      });
+
+      $('#decline').on('click', function() {
+        $('#modal').css('display', 'none');
+      });
+
 
   });
 
