@@ -6,7 +6,7 @@ const GameModel = model.GameModel;
 
 exports.playGame = function(){
   var waiting = [];
-
+  var name;
   var connections = [];
   var roomno=1;
   io.sockets.on('connection', function(socket){
@@ -14,9 +14,12 @@ exports.playGame = function(){
     console.log('Connected: %s sockets connected', connections.length);
 
     socket.on('wait', function(data){
-      waiting.push(data.name);
-      console.log(waiting.length);
-      if(waiting.length % 2 === 0){
+      name = data.name;
+      if(waiting.indexOf(name) == -1){
+        waiting.push(name);
+        console.log(waiting.length);
+      }
+      if(waiting.length >= 2){
         //Saving new game to the DB
         let roomex = new GameModel({
           roomno:roomno,
@@ -74,6 +77,10 @@ exports.playGame = function(){
 
     socket.on('disconnect', function(data){
       connections.splice(connections.indexOf(socket), 1);
+      if(waiting.indexOf(name) != -1){
+        waiting.splice(waiting.indexOf(name), 1);
+        console.log(waiting.length);
+      }
       console.log('Disconnected %s sockets connected', connections.length);
     });
   });

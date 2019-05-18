@@ -36,6 +36,7 @@ router.post('/:white/:black', function(req, res){
   GameModel.findOne({roomno: req.body.roomno}, function(err, result){
     if(result){
       User.findOne({email: req.session.email}, function(err, user){
+        //console.log(user.games[0].player1);
         user.games.player1 = result.player1;
         user.games.player2 = result.player2;
         user.games.moves = result.moves;
