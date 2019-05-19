@@ -13,7 +13,7 @@ mongoose.set('useCreateIndex', true);
 
 router.get('/:white/:black', function(req, res){
   res.render('about',{
-    user: req.session.email,
+    user: req.session.username,
     white: req.params.white,
     black: req.params.black
   });
@@ -25,7 +25,7 @@ router.post('/:white/:black', function(req, res){
   var winner = req.body.winner;
   console.log(winner);
   User.findOne({email: req.session.email}, function(err, user){
-    if(user.email == winner){
+    if(user.name == winner){
       user.victories++;
     } else {
       user.losses++;

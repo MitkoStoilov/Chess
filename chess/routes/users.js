@@ -63,7 +63,14 @@ router.get('/login', function(req, res){
 });
 
 router.post('/login',function(req,res,next){
-  req.session.email = req.body.username;
+  User.findOne({email: req.body.username}, function(err, user){
+    if(err){
+      throw err;
+    }
+    req.session.email = user.email;
+    req.session.username = user.name;
+  });
+
   next();
 }, passport.authenticate('local', {
     successRedirect:'/',
