@@ -7,13 +7,20 @@ router.get('/',function(req,res){
     if(err){
       throw err;
     }
-    res.render('profile', {
-      
-      wins: user.victories,
-      losses: user.losses,
-      name: user.name
-    });
+    res.render('profile', {layout: false});
 
+  });
+});
+
+router.get('/status', function(req, res){
+  User.findOne({email: req.session.email}, function(err, user){
+    if(err){
+      throw err;
+    }
+    var status = { user: user.name,
+                   victories: user.victories,
+                   losses: user.losses }
+    res.json(status);
   });
 });
 

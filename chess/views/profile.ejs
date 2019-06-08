@@ -1,8 +1,27 @@
-<div id = "container">
-  <p id="user"><%= name%></p>
-  <p id="victories">Victories: <b><%= wins%></b></p>
-  <p id="losses">Losses: <b><%= losses%></b></p>
-</div>
-<a href="/logout">Logout</a><br/>
-<a href="/">Home</a>
-<a href="/old/games">Last game</a>
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+      <title>Profile</title>
+      <meta charset="UTF-8">
+      <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+      <script src="http://code.jquery.com/jquery-1.12.4.js" ></script>
+      <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      <script>
+        $.getJSON('http://localhost:3000/profile/status', function (json) {
+          $('#vCount').html(json.victories);
+          $('#lCount').html(json.losses);
+          $('#user').html(json.user);
+        });
+      </script>
+    </head>
+    <body>
+      <div id = "container">
+        <p id="user"></p>
+        <p id="victories">Victories: <b id="vCount"></b></p>
+        <p id="losses">Losses: <b id="lCount"></b></p>
+      </div>
+      <a href="/logout">Logout</a><br/>
+      <a href="/">Home</a>
+      <a href="/old/games">Last game</a>
+    </body>
+</html>
