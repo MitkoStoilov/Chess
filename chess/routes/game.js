@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 const model = require('../models/game.js');
 const GameModel = model.GameModel;
 const User = require('../models/profile');
+const PlayedGame = require('../models/playedGame.js');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -18,7 +19,9 @@ router.get('/:white/:black', function(req, res){
     black: req.params.black
   });
 });
+
 var count = 0;
+
 router.post('/:white/:black', function(req, res){
   count++;
   var game
@@ -36,12 +39,13 @@ router.post('/:white/:black', function(req, res){
   GameModel.findOne({roomno: req.body.roomno}, function(err, result){
     if(result){
       User.findOne({email: req.session.email}, function(err, user){
-        //console.log(user.games[0].player1);
+
         user.games.player1 = result.player1;
         user.games.player2 = result.player2;
         user.games.moves = result.moves;
         user.save();
       });
+
     }
   });
   if(count % 2 == 0){
@@ -51,6 +55,31 @@ router.post('/:white/:black', function(req, res){
   }
   res.end('done');
 
+});
+
+router.post('/save', function(req, res){
+  var num = 0;
+  PlayedGame.findOne({}, {}, { sort: { 'created_at' : -1 } }, function(err, game) {
+    if(game.gameNumber == null){
+      num = 1;
+    } else {
+    num = game.gameNumber;
+    num++;
+    }
+
+    var newGame = new PlayedGame({
+      gameNumber: num,
+      player1: req.body.player1,
+      player2: req.body.player2,
+      moves: req.body.moves
+    });
+    newGame.save(function(err){
+        if(err){
+          console.log(err);
+          return;
+        }
+    });
+  });
 });
 
 module.exports = router;
