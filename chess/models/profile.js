@@ -47,6 +47,11 @@ let userSchema = new Schema({
         default: 0
     },
 
+    profileImage:{
+      type:String,
+      required:false
+    },
+
     losses:{
         type:Number,
         default: 0

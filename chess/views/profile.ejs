@@ -11,10 +11,18 @@
           $('#vCount').html(json.victories);
           $('#lCount').html(json.losses);
           $('#user').html(json.user);
+          $('#image').html(json.profilePicture);
         });
+        
       </script>
     </head>
     <body>
+        <form action="/profile/upload" method="POST" enctype="multipart/form-data">
+          <input type="file" name="file" id="file">
+          <label for="file">Change picture</label>
+      
+          <input type="submit"value="Submit">
+        </form>
       <div id = "container">
         <p id="user"></p>
         <p id="victories">Victories: <b id="vCount"></b></p>
