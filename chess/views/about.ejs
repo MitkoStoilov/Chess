@@ -53,7 +53,9 @@
             roomno: roomno,
             winner: winner
           });
+        }
 
+        var saveGame = function(){
           $.post("http://localhost:3000/game/save", {
             player1: white,
             player2: black,
@@ -144,6 +146,9 @@
             winner = white;
           }
           endGame();
+          if(winner == user){
+            saveGame();
+          }
         }
 
         else if(game.in_threefold_repetition()){

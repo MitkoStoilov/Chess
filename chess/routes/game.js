@@ -60,7 +60,7 @@ router.post('/:white/:black', function(req, res){
 router.post('/save', function(req, res){
   var num = 0;
   PlayedGame.findOne({}, {}, { sort: { 'created_at' : -1 } }, function(err, game) {
-    if(game.gameNumber == null){
+    if(game == null){
       num = 1;
     } else {
     num = game.gameNumber;
