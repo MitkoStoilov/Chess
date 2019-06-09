@@ -49,6 +49,38 @@ router.post('/upload',upload.single('file'),  (req, res) =>{
   res.json({file: req.file});
 });
 
+
+router.get('/image/:filename', (req, res) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: 'No file exists'
+      });
+    }
+
+    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+     
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({
+        err: 'Not an image'
+      });
+    }
+  });
+});
+
+router.delete('/image/:id', (req, res) => {
+  gfs.remove({ _id: req.params.id, root: 'uploads' }, (err, gridStore) => {
+    if (err) {
+      return res.status(404).json({ err: err });
+    }
+
+    res.redirect('/');
+  });
+});
+
+
 router.get('/',function(req,res){
   User.findOne({email: req.session.email}, function(err, user){
     if(err){
