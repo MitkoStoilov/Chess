@@ -16,8 +16,8 @@ router.use(methodOverride('_method'));
 
 
 const mongoPath = 'mongodb://localhost/chess';
-
 const conn = mongoose.createConnection(mongoPath);
+
 let gfs;
 
 conn.once('open', () =>{
@@ -46,27 +46,36 @@ const storage = new GridFsStorage({
 const upload = multer({ storage });
 
 router.post('/upload',upload.single('file'),  (req, res) =>{
+  User.findOne({email: req.session.email}, function(err, user){
+    if(err){
+      throw err;
+    }
+    user.profileImage = req.file.filename;
+    user.save();
+  });
   res.json({file: req.file});
 });
 
 
-router.get('/image/:filename', (req, res) => {
-  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
-    if (!file || file.length === 0) {
-      return res.status(404).json({
-        err: 'No file exists'
-      });
-    }
+router.get('/image/:username', (req, res) => {
+  User.findOne({name: req.params.username}, function(err, user){
+    gfs.files.findOne({ filename: user.profileImage }, (err, file) => {
+      if (!file || file.length === 0) {
+        return res.status(404).json({
+          err: 'No file exists'
+        });
+      }
 
-    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
-     
-      const readstream = gfs.createReadStream(file.filename);
-      readstream.pipe(res);
-    } else {
-      res.status(404).json({
-        err: 'Not an image'
-      });
-    }
+      if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+
+        const readstream = gfs.createReadStream(file.filename);
+        readstream.pipe(res);
+      } else {
+        res.status(404).json({
+          err: 'Not an image'
+        });
+      }
+    });
   });
 });
 
