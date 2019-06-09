@@ -59,7 +59,8 @@
           $.post("http://localhost:3000/game/save", {
             player1: white,
             player2: black,
-            moves: movesEl.text()
+            moves: movesEl.text(),
+            roomno: roomno
           });
         }
 

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const database = 'chess';
+var mongoosePaginate = require('mongoose-paginate');
 
 console.log("test");
 var Schema = mongoose.Schema;
@@ -20,9 +21,6 @@ class Database {
   }
 
 let PlayedGameSchema = new Schema({
-    gameNumber:{
-      type: Number
-    },
     player1: {
       type:String
     },
@@ -33,6 +31,6 @@ let PlayedGameSchema = new Schema({
       type:String
     }
 });
-
+PlayedGameSchema.plugin(mongoosePaginate);
 var PlayedGame = mongoose.model('PlayedGame', PlayedGameSchema);
 module.exports = PlayedGame;
