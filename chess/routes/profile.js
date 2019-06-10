@@ -59,45 +59,69 @@ router.post('/upload',upload.single('file'),  (req, res) =>{
 
 router.get('/image/:username', (req, res) => {
   User.findOne({name: req.params.username}, function(err, user){
-    gfs.files.findOne({ filename: user.profileImage }, (err, file) => {
-      if (!file || file.length === 0) {
-        return res.status(404).json({
-          err: 'No file exists'
-        });
-      }
+    if(user.profileImage == null){
+      return res.status(404).json({ err: err });
+    }else{
+      gfs.files.findOne({ filename: user.profileImage }, (err, file) => {
+        if (!file || file.length === 0) {
+          return res.status(404).json({
+            err: 'No file exists'
+          });
+        }
 
-      if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+        if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
 
-        const readstream = gfs.createReadStream(file.filename);
-        readstream.pipe(res);
-      } else {
-        res.status(404).json({
-          err: 'Not an image'
-        });
-      }
-    });
+          const readstream = gfs.createReadStream(file.filename);
+          readstream.pipe(res);
+        } else {
+          res.status(404).json({
+            err: 'Not an image'
+          });
+        }
+      });
+    }
   });
 });
 
-router.delete('/image/:id', (req, res) => {
-  gfs.remove({ _id: req.params.id, root: 'uploads' }, (err, gridStore) => {
+router.delete('/image/delete', (req, res) => {
+  console.log("test1");
+  User.findOne({email: req.session.email}, function(err, user){
     if (err) {
       return res.status(404).json({ err: err });
     }
 
-    res.redirect('/');
+    gfs.files.findOne({ filename: user.profileImage }, (err, file) => {
+      if (err) {
+        return res.status(404).json({ err: err });
+      }
+
+      user.profileImage = "";
+      user.save();
+      console.log("test2");
+      gfs.remove({ _id: file.id, root: 'uploads' }, (err, gridStore) => {
+        if (err) {
+          return res.status(404).json({ err: err });
+        }
+        console.log("test3");
+        res.redirect('/');
+      });
+    });
   });
 });
 
 
 router.get('/',function(req,res){
-  User.findOne({email: req.session.email}, function(err, user){
-    if(err){
-      throw err;
-    }
-    res.render('profile', {layout: false});
+  if(req.session.email){
+    User.findOne({email: req.session.email}, function(err, user){
+      if(err){
+        throw err;
+      }
+      res.render('profile', {layout: false});
 
-  });
+    });
+  } else {
+    res.render('login')
+  }
 });
 
 
@@ -109,8 +133,7 @@ router.get('/status', function(req, res){
     }
     var status = { user: user.name,
                    victories: user.victories,
-                   losses: user.losses,
-                   profileImage: user.profileImage
+                   losses: user.losses
                    }
     res.json(status);
   });

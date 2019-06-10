@@ -11,16 +11,16 @@
           $('#vCount').html(json.victories);
           $('#lCount').html(json.losses);
           $('#user').html(json.user);
-          $('#image').html(json.profilePicture);
+          const url = "/profile/image/" + $('#user').text();
+          $('#linkImg').attr("href", url);
         });
-        
       </script>
     </head>
     <body>
         <form action="/profile/upload" method="POST" enctype="multipart/form-data">
           <input type="file" name="file" id="file">
           <label for="file">Change picture</label>
-      
+
           <input type="submit"value="Submit">
         </form>
       <div id = "container">
@@ -30,6 +30,7 @@
       </div>
       <a href="/logout">Logout</a><br/>
       <a href="/">Home</a>
-      <a href="/old/games">Last game</a>
+      <a href="/old/all">Games</a>
+      <a id="linkImg" href="/profile/image/test">Img</a>
     </body>
 </html>

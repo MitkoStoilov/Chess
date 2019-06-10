@@ -16,7 +16,12 @@ router.get('/games',function(req,res){
 
 
 router.get('/all/games',function(req,res){
-	PlayedGame.paginate( { $or:[  { player1: req.session.username },  { player2: req.session.username } ]}, {page:1, limit:3},(error, result) => {
+  var page = req.query.page;
+
+  if (page === undefined) {
+    page = 1;
+  }
+	PlayedGame.paginate( { $or:[  { player1: req.session.username },  { player2: req.session.username } ]}, {page:page, limit:1},(error, result) => {
 	  if (error) {
 		  console.error(error);
 			return null;
@@ -28,6 +33,10 @@ router.get('/all/games',function(req,res){
 			res.json({});
 	  }
 	});
+});
+
+router.get('/all',function(req,res){
+  res.render('all_games');
 });
 
 module.exports = router;

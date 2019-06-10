@@ -60,19 +60,7 @@ let userSchema = new Schema({
     elo:{
         type:Number,
         default: 0
-    },
-    games:{
-      player1: {
-        type:String
-      },
-      player2: {
-        type:String
-      },
-      moves: {
-        type:String
-      }
     }
-
 });
 
 var User = mongoose.model('User', userSchema);
