@@ -17,6 +17,8 @@
     <p>page: <span id="txtPage"></span></p>
     <p>total pages: <span id="txtTotal"></span></p>
     <p>Moves: <span id="moves"></span></p>
+    <p>white: <span id="white"></span></p>
+    <p>black: <span id="black"></span></p>
     <div id="board" style="width: 400px"></div>
     <input type="button" id="btnPrev" value="previous"/>
     <input type="button" id="startPositionBtn" value="Start Position" />
@@ -35,6 +37,8 @@
 
 
         $('#moves').html(json.games.docs[0].moves);
+        $('#white').html(json.games.docs[0].player1);
+        $('#black').html(json.games.docs[0].player2);
         movesEl = document.getElementById("moves").textContent;
         var moves = movesEl.split("; ");
 
@@ -78,6 +82,9 @@
         if(page == 1){
           $('#btnPrev').prop('disabled', true);
         }
+        if(pages == 1){
+          $('#btnNext').prop('disabled', true);
+        }
         $(btnNext).click(function() {
             page++;
             if(page > 1){
@@ -90,6 +97,8 @@
               $('#txtPage').html(json.games.page);
 
               $('#moves').html(json.games.docs[0].moves);
+              $('#white').html(json.games.docs[0].player1);
+              $('#black').html(json.games.docs[0].player2);
               movesEl = document.getElementById("moves").textContent;
               moves = movesEl.split("; ");
               count = 0;
@@ -109,6 +118,8 @@
               $('#txtPage').html(json.games.page);
 
               $('#moves').html(json.games.docs[0].moves);
+              $('#white').html(json.games.docs[0].player1);
+              $('#black').html(json.games.docs[0].player2);
               movesEl = document.getElementById("moves").textContent;
               moves = movesEl.split("; ");
               count = 0;
