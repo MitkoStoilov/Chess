@@ -4,10 +4,13 @@ const User = require('../models/profile');
 var name;
 
 router.get('/', function(req, res){
-
-  res.render('query', { layout: false,
-    name: req.session.username
-  });
+  if(req.session.email){
+    res.render('query', { layout: false,
+      name: req.session.username
+    });
+  }else{
+    res.redirect('/users/login');
+  }
 });
 
 router.post('/',function(req, res){

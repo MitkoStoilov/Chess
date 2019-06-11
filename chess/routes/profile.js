@@ -58,29 +58,33 @@ router.post('/upload',upload.single('file'),  (req, res) =>{
 
 
 router.get('/image/:username', (req, res) => {
-  User.findOne({name: req.params.username}, function(err, user){
-    if(user.profileImage == null){
-      return res.status(404).json({ err: err });
-    }else{
-      gfs.files.findOne({ filename: user.profileImage }, (err, file) => {
-        if (!file || file.length === 0) {
-          return res.status(404).json({
-            err: 'No file exists'
-          });
-        }
+  if(req.session.email){
+    User.findOne({name: req.params.username}, function(err, user){
+      if(user.profileImage == null){
+        return res.status(404).json({ err: err });
+      }else{
+        gfs.files.findOne({ filename: user.profileImage }, (err, file) => {
+          if (!file || file.length === 0) {
+            return res.status(404).json({
+              err: 'No file exists'
+            });
+          }
 
-        if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+          if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
 
-          const readstream = gfs.createReadStream(file.filename);
-          readstream.pipe(res);
-        } else {
-          res.status(404).json({
-            err: 'Not an image'
-          });
-        }
-      });
-    }
-  });
+            const readstream = gfs.createReadStream(file.filename);
+            readstream.pipe(res);
+          } else {
+            res.status(404).json({
+              err: 'Not an image'
+            });
+          }
+        });
+      }
+    });
+  }else{
+    res.redirect('/users/login');
+  }
 });
 
 router.delete('/image/delete', (req, res) => {
@@ -120,7 +124,7 @@ router.get('/',function(req,res){
 
     });
   } else {
-    res.render('login', {layout:true});
+    res.redirect('/users/login');
   }
 });
 

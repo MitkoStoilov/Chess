@@ -243,12 +243,21 @@
             socket.on('load', function(data) {
               board.position(data.fen);
               game.load(data.fen);
-              if(data.player1 !== user){
+              /*if(data.player1 !== user){
                 board.flip();
-              }
+              }*/
               movesEl.html(data.moves);
               updateStatus();
             });
+
+            $.getJSON('http://localhost:3000/profile/status', function (json) {
+              //alert(json.user + data.player1);
+              if(json.user!=white){
+                board.flip();
+              }
+            });
+
+
 
 
             $('#flipOrientationBtn').on('click', function(){
