@@ -1,77 +1,123 @@
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<div id = "container">
-  <h1 id="instructions" style="display: none;">Please wait</h1>
-  <p id="name"><%= name%></p>
-  <a href="/">Home</a>
-  <input type="button" id="joinBtn" value="Join queue" />
-  <h3>Online Users</h3>
-  <ul class="list-group" id="users">
-
-  </ul>
-  <div style="display:none; background-color:black; margin-left:500px; width:300px; height:150px;" id="modal">
-    <p style="color:white;"><span id="challenger"></span> is challenging you</p>
-    <input type="button" id="accept" value="Accept" />
-    <input type="button" id="decline" value="Decline" />
-  </div>
-</div>
 
 
-<script type="text/javascript">
 
-  const name = $('#name').text();
-  var $users = $('#users');
-  var challenger;
-  $(function(){
-      var socket = io.connect();
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/query.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Loby</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a class="navbar-brand">Chess</a>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              <li class="nav-item active">
+                <a class="nav-link active" href="/">Home <span class="sr-only"></span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/profile">Profile</a>
+              </li>
+              <li class="nav-item">
 
-      socket.emit('join lobby', {name: name});
+                  <a class="nav-link active" href="/query">Play</a>
 
-      socket.on('startGame', function(data){
-        $.post("http://localhost:3000/query", function(d) {
-            if(d==='done' && (name == data.player1 || name == data.player2) ) {
-                window.location.href="/game/" + data.player1 + "/" + data.player2 + "/?roomno=" + data.roomno;
+                </li>
+
+            </ul>
+                <ul class="nav navbar-nav navbar-right">
+                <li><a id="linkImg" href="/profile/image/test"><p id="user"><%= name %></p></a></li>
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+
+            </ul>
+        </div>
+      </nav>
+
+      <div id = "container">
+        <div id="options">
+          <p id="instructions" style="display: none;">Please wait</p>
+  		    <p id="name" style="display: none"><%= name%></p>
+          <input type="button" id="joinBtn" value="Join queue" />
+          <h3>Online Users</h3>
+          <ul class="list-group" id="users">
+
+          </ul>
+        </div>
+        <div style="display:none; background-color:black; margin-left:500px; width:300px; height:150px;" id="modal">
+          <p style="color:white;"><span id="challenger"></span> is challenging you</p>
+          <input type="button" id="accept" value="Accept" />
+          <input type="button" id="decline" value="Decline" />
+        </div>
+      </div>
+      <script type="text/javascript">
+
+        const name = $('#name').text();
+        var $users = $('#users');
+        var challenger;
+        const url = "/profile/image/" + $('#user').text();
+        $('#linkImg').attr("href", url);
+        $(function(){
+
+            var socket = io.connect();
+
+            socket.emit('join lobby', {name: name});
+
+            socket.on('startGame', function(data){
+              $.post("http://localhost:3000/query", function(d) {
+                  if(d==='done' && (name == data.player1 || name == data.player2) ) {
+                      window.location.href="/game/" + data.player1 + "/" + data.player2 + "/?roomno=" + data.roomno;
+                  }
+              });
+            });
+
+            socket.on('get users', function(data){
+              var html = '';
+              for(i=0; i<data.length; i++){
+                if(data[i]!=name){
+                  html+='<li><a onclick="request('+ "'" + data[i] + "'" +')" href="#">'+data[i]+'</a></li>';
+                }
+              }
+              $users.html(html);
+            });
+
+            $('#joinBtn').on('click', function() {
+              socket.emit('wait', {name: name});
+               $('#instructions').css('display', 'block');
+            });
+
+            socket.on('responce', function(data){
+                if(name == data.opponent) {
+                  challenger = data.challenger;
+                  $('#challenger').html(challenger);
+                  $('#modal').css('display', 'block');
+                }
+            });
+
+            request = function(opponent){
+              socket.emit('request', {opponent: opponent, challenger: name});
             }
+
+            $('#accept').on('click', function() {
+              socket.emit('challenge', challenger);
+            });
+
+            $('#decline').on('click', function() {
+              $('#modal').css('display', 'none');
+            });
+
+
         });
-      });
 
-      socket.on('get users', function(data){
-        var html = '';
-        for(i=0; i<data.length; i++){
-          if(data[i]!=name){
-            html+='<li><a onclick="request('+ "'" + data[i] + "'" +')" href="#">'+data[i]+'</a></li>';
-          }
-        }
-        $users.html(html);
-      });
-
-      $('#joinBtn').on('click', function() {
-        socket.emit('wait', {name: name});
-         $('#instructions').css('display', 'block');
-      });
-
-      socket.on('responce', function(data){
-          if(name == data.opponent) {
-            challenger = data.challenger;
-            $('#challenger').html(challenger);
-            $('#modal').css('display', 'block');
-          }
-      });
-
-      request = function(opponent){
-        socket.emit('request', {opponent: opponent, challenger: name});
-      }
-
-      $('#accept').on('click', function() {
-        socket.emit('challenge', challenger);
-      });
-
-      $('#decline').on('click', function() {
-        $('#modal').css('display', 'none');
-      });
-
-
-  });
-
-</script>
+      </script>
+  </body>
+</html>

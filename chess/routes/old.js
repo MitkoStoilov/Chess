@@ -36,7 +36,8 @@ router.get('/all/games',function(req,res){
 });
 
 router.get('/all',function(req,res){
-  res.render('all_games');
+  res.render('all_games',{layout: false,
+                          username: req.session.username});
 });
 
 module.exports = router;

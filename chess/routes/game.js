@@ -13,7 +13,7 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 router.get('/:white/:black', function(req, res){
-  res.render('about',{
+  res.render('about',{ layout: false,
     user: req.session.username,
     white: req.params.white,
     black: req.params.black

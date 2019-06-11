@@ -3,8 +3,9 @@
   margin-top: -410px;
 }
 
-
-
+body{
+  background-color: white;
+}
 .navbar{
  font-size: large;
 }

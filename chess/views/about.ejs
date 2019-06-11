@@ -1,211 +1,262 @@
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/css/chessboard-0.3.0.min.css">
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="/js/chessboard-0.3.0.min.js"></script>
-<script src="/js/chess.js"></script>
-<script src="/socket.io/socket.io.js"></script>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/game.css">
+    <link rel="stylesheet" href="/css/chessboard-0.3.0.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/js/chessboard-0.3.0.min.js"></script>
+    <script src="/js/chess.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Game</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a class="navbar-brand">Chess</a>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              <li class="nav-item active">
+                <a class="nav-link active" href="/">Home <span class="sr-only"></span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/profile">Profile</a>
+              </li>
+              <li class="nav-item">
 
-<div id = "container">
-  <p id="user"><%= user%></p>
-  <p><b>white:</b> <span id="white"><%= white%></span></p>
-  <p><b>black:</b> <span id="black"><%= black%></span></p>
-  <p>room number: <b><span id="roomno"></span></b></p>
-  <a href="/logout">Logout</a><br/>
-  <a href="/">Home</a>
+                  <a class="nav-link active" href="/query">Play</a>
 
-  <div id="board" style="width: 400px; margin-top: 30px"></div>
+                </li>
 
-  <div id="game_data">
-    <p>Status: <span id="status"></span></p>
-    <p>FEN: <span id="fen"></span></p>
-    <p>Moves: <span id="pgn"></span></p>
-    <input type="button" id="flipOrientationBtn" value="Flip orientation" />
-  </div>
-</div>
+            </ul>
+                <ul class="nav navbar-nav navbar-right">
+                <li><a id="linkImg" href="/profile/image/test"><p id="user"><%= user %></p></a></li>
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
 
-<script type="text/javascript">
-  var parameter = window.location.search.replace( "?", "" );
-  var values = parameter.split("=");
-  var roomno = values[1];
-  document.getElementById('roomno').innerHTML = values[1];
+            </ul>
+        </div>
+      </nav>
 
-  var usr = document.getElementById('user').innerHTML;
+      <div id = "container">
+        <p id="user" style="display: none"><%= user%></p>
+        <p id="players"><span id="white"><%= white%></span>(white) vs <span id="black"><%= black%></span>(black)</p>
+        <p style="display: none">room number: <b><span id="roomno"></span></b></p>
+        <div id="boardContainer">
+          <div id="board" style="width: 400px; margin-top: 30px"></div>
+          <div id="boardInfo">
+            <input type="button" id="flipOrientationBtn" value="Flip orientation"/>
+          </div>
+          <p id="statusP">Status: <span id="status"></span></p>
+        </div>
+        <div id="game_data">
 
-  $(function(){
-      var socket = io.connect();
+          <!--<p>FEN: <span id="fen"></span></p>-->
 
-      socket.emit('connectToRoom', roomno);
+          <div id = "allMoves">
+            <p id="t">Moves:</p>
+            <br>
+            <div id = "movesContainer">
+              <p id="pgn"></p>
+            </div>
+          </div>
 
-      var fen;
-      var winner;
-      var board,
-        game = new Chess(),
-        statusEl = $('#status'),
-        fenEl = $('#fen'),
-        movesEl = $('#pgn');
-      const user = $('#user').text(),
-        white = $('#white').text(),
-        black = $('#black').text();
 
-        var endGame = function(){
-          $.post("http://localhost:3000/game/"+white+"/"+black+"/?roomno="+roomno, {
-            white: white,
-            black: black,
-            roomno: roomno,
-            winner: winner
+          <!--<p>Moves: <span id="pgn"></span></p>-->
+
+        </div>
+      </div>
+
+      <script type="text/javascript">
+        var parameter = window.location.search.replace( "?", "" );
+        var values = parameter.split("=");
+        var roomno = values[1];
+        document.getElementById('roomno').innerHTML = values[1];
+
+        var usr = document.getElementById('user').innerHTML;
+
+        $(function(){
+            var socket = io.connect();
+
+            socket.emit('connectToRoom', roomno);
+
+            var fen;
+            var winner;
+            var board,
+              game = new Chess(),
+              statusEl = $('#status'),
+              fenEl = $('#fen'),
+              movesEl = $('#pgn');
+            const user = $('#user').text(),
+              white = $('#white').text(),
+              black = $('#black').text();
+
+              var endGame = function(){
+                $.post("http://localhost:3000/game/"+white+"/"+black+"/?roomno="+roomno, {
+                  white: white,
+                  black: black,
+                  roomno: roomno,
+                  winner: winner
+                });
+              }
+
+              var saveGame = function(){
+                $.post("http://localhost:3000/game/save", {
+                  player1: white,
+                  player2: black,
+                  moves: movesEl.text(),
+                  roomno: roomno
+                });
+              }
+
+            var onDragStart = function(source, piece, position, orientation) {
+              if (game.game_over() === true ||
+                  (user === white && piece.search(/^b/) !== -1) ||
+                  (user === black && piece.search(/^w/) !== -1)){
+
+                return false;
+              }else if(user !== white && user !== black){
+                return false;
+              }
+
+            };
+
+            /*var calcElo = function(elo1, elo2, result){
+              const points1, points2;
+              if(result == 1){
+                points1 = 1;
+                points2 = 0;
+              }else if(result == 0){
+                points1 = 0;
+                points2 = 1;
+              }else{
+                points1 = points2 = 0.5;
+              }
+
+              const Kfactor = 32;
+              const Qa = (10**(elo1/400));
+              const Qb = (10**(elo2/400));
+
+              const ExcpectedScore1 = Qa/(Qa+Qb);
+              const ExcpectedScore2 = Qb/(Qa+Qb);
+
+              elo1 = elo1 + Kfacotr*(points1 - ExcpectedScore1);
+              elo2 = elo2 + Kfacotr*(points2 - ExcpectedScore2);
+
+            }*/
+
+            var onDrop = function(source, target) {
+
+              var move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q'
+              });
+
+              if (move === null) return 'snapback';
+
+              socket.emit('make a move', {fen: game.fen(), move: move, num: roomno});
+
+            };
+
+            var onSnapEnd = function() {
+              board.position(game.fen());
+            };
+
+            var moves = [];
+            socket.on('new move', function(data){
+
+            //  board.move(data.move.from+'-'+data.move.to);
+              board.position(data.fen);
+              moves.push(data.move.from+'-'+data.move.to + "; ");
+              movesEl.html(data.moves);
+
+              game.load(data.fen);
+              updateStatus();
+            });
+
+
+            var updateStatus = function() {
+              var status = '';
+
+              var moveColor = 'White';
+              if (game.turn() === 'b') {
+                moveColor = 'Black';
+              }
+
+              if (game.in_checkmate() === true) {
+                status = 'Game over, ' + moveColor + ' is in checkmate.';
+                if(moveColor == 'White'){
+                  winner = black;
+                } else {
+                  winner = white;
+                }
+                endGame();
+                if(winner == user){
+                  saveGame();
+                }
+              }
+
+              else if(game.in_threefold_repetition()){
+                status = 'Game draw due to threefolded repetition';
+                endGame();
+              }
+
+              else if(game.insufficient_material()){
+                status = 'Game over due to insufficient material';
+                endGame();
+              }
+
+              else if (game.in_draw() === true) {
+                status = 'Game over, drawn position';
+                endGame();
+              }
+
+              else {
+                status = moveColor + ' to move';
+                if (game.in_check() === true) {
+                  status += ', ' + moveColor + ' is in check';
+                }
+            }
+
+              statusEl.html(status);
+              fenEl.html(game.fen());
+            };
+
+
+            var cfg = {
+              draggable: true,
+              orientation: 'white',
+              position: 'start',
+              onDragStart: onDragStart,
+              onDrop: onDrop,
+              onSnapEnd: onSnapEnd
+            };
+
+
+            board = ChessBoard('board', cfg);
+
+            socket.on('load', function(data) {
+              board.position(data.fen);
+              game.load(data.fen);
+              if(data.player1 !== user){
+                board.flip();
+              }
+              movesEl.html(data.moves);
+              updateStatus();
+            });
+
+
+            $('#flipOrientationBtn').on('click', function(){
+              board.flip();
+            });
+
           });
-        }
+      </script>
 
-        var saveGame = function(){
-          $.post("http://localhost:3000/game/save", {
-            player1: white,
-            player2: black,
-            moves: movesEl.text(),
-            roomno: roomno
-          });
-        }
-
-      var onDragStart = function(source, piece, position, orientation) {
-        if (game.game_over() === true ||
-            (user === white && piece.search(/^b/) !== -1) ||
-            (user === black && piece.search(/^w/) !== -1)){
-
-          return false;
-        }else if(user !== white && user !== black){
-          return false;
-        }
-
-      };
-
-      /*var calcElo = function(elo1, elo2, result){
-        const points1, points2;
-        if(result == 1){
-          points1 = 1;
-          points2 = 0;
-        }else if(result == 0){
-          points1 = 0;
-          points2 = 1;
-        }else{
-          points1 = points2 = 0.5;
-        }
-
-        const Kfactor = 32;
-        const Qa = (10**(elo1/400));
-        const Qb = (10**(elo2/400));
-
-        const ExcpectedScore1 = Qa/(Qa+Qb);
-        const ExcpectedScore2 = Qb/(Qa+Qb);
-
-        elo1 = elo1 + Kfacotr*(points1 - ExcpectedScore1);
-        elo2 = elo2 + Kfacotr*(points2 - ExcpectedScore2);
-
-      }*/
-
-      var onDrop = function(source, target) {
-
-        var move = game.move({
-          from: source,
-          to: target,
-          promotion: 'q'
-        });
-
-        if (move === null) return 'snapback';
-
-        socket.emit('make a move', {fen: game.fen(), move: move, num: roomno});
-
-      };
-
-      var onSnapEnd = function() {
-        board.position(game.fen());
-      };
-
-      var moves = [];
-      socket.on('new move', function(data){
-
-      //  board.move(data.move.from+'-'+data.move.to);
-        board.position(data.fen);
-        moves.push(data.move.from+'-'+data.move.to + "; ");
-        movesEl.html(data.moves);
-
-        game.load(data.fen);
-        updateStatus();
-      });
-
-
-      var updateStatus = function() {
-        var status = '';
-
-        var moveColor = 'White';
-        if (game.turn() === 'b') {
-          moveColor = 'Black';
-        }
-
-        if (game.in_checkmate() === true) {
-          status = 'Game over, ' + moveColor + ' is in checkmate.';
-          if(moveColor == 'White'){
-            winner = black;
-          } else {
-            winner = white;
-          }
-          endGame();
-          if(winner == user){
-            saveGame();
-          }
-        }
-
-        else if(game.in_threefold_repetition()){
-          status = 'Game draw due to threefolded repetition';
-          endGame();
-        }
-
-        else if(game.insufficient_material()){
-          status = 'Game over due to insufficient material';
-          endGame();
-        }
-
-        else if (game.in_draw() === true) {
-          status = 'Game over, drawn position';
-          endGame();
-        }
-
-        else {
-          status = moveColor + ' to move';
-          if (game.in_check() === true) {
-            status += ', ' + moveColor + ' is in check';
-          }
-      }
-
-        statusEl.html(status);
-        fenEl.html(game.fen());
-      };
-
-
-      var cfg = {
-        draggable: true,
-        orientation: 'white',
-        position: 'start',
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd
-      };
-
-
-      board = ChessBoard('board', cfg);
-
-      socket.on('load', function(data) {
-        board.position(data.fen);
-        game.load(data.fen);
-        if(data.player1 !== user){
-          board.flip();
-        }
-        movesEl.html(data.moves);
-        updateStatus();
-      });
-
-
-      $('#flipOrientationBtn').on('click', function(){
-        board.flip();
-      });
-
-    });
-</script>
+  </body>
+</html>

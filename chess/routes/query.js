@@ -5,7 +5,7 @@ var name;
 
 router.get('/', function(req, res){
 
-  res.render('query', {
+  res.render('query', { layout: false,
     name: req.session.username
   });
 });

@@ -1,0 +1,37 @@
+#container{
+  margin-left: 50px;
+}
+
+#players{
+  font-size: 30px;
+}
+
+#boardInfo{
+  float: left;
+}
+
+#statusP{
+  margin-left: 200px;
+  font-size: 20px;
+}
+
+#allMoves{
+  /*margin-left: 650px;*/
+  margin-top: -470px;
+  float: right;
+  width: 530px;
+  margin-right: 80px;
+  height: 400px;
+}
+
+#movesContainer{
+  border: solid;
+  border-width: 1px;
+  height: 400px;
+  width: 530px;
+  overflow-y: scroll;
+}
+
+#t{
+  font-size: 30px;
+}
