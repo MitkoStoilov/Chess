@@ -1,6 +1,5 @@
 var s = require('./server.js');
 var io = require('socket.io').listen(s.server);
-
 const model = require('../models/game.js');
 const GameModel = model.GameModel;
 
@@ -98,14 +97,18 @@ exports.playGame = function(){
       socket.join("room-"+data);
       var index=data;
       GameModel.findOne({roomno: index}, function(err, results){
-        var fen = results.gamestate;
-        var player1 = results.player1;
-        var moves = results.moves;
-        io.sockets.in("room-"+data).emit('load', {
-          fen: fen,
-          player1: player1,
-          moves: moves
-        });
+        if(results==null){
+
+        }else{
+          var fen = results.gamestate;
+          var player1 = results.player1;
+          var moves = results.moves;
+          io.sockets.in("room-"+data).emit('load', {
+            fen: fen,
+            player1: player1,
+            moves: moves
+          });
+        }
       });
     });
 

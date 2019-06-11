@@ -25,12 +25,12 @@ router.get('/',function(req, res){
                                   username: req.session.username});
           } else {
             //console.log(results);
-            res.redirect('/game/'+results[0].player1+'/'+results[0].player2+'/?roomno='+results[0].roomno);
+            //res.redirect('/game/'+results[0].player1+'/'+results[0].player2+'/?roomno='+results[0].roomno);
           }
         });
       } else {
         //console.log(results);
-        res.redirect('/game/'+results[0].player1+'/'+results[0].player2+'/?roomno='+results[0].roomno);
+        //res.redirect('/game/'+results[0].player1+'/'+results[0].player2+'/?roomno='+results[0].roomno);
       }
     });
   }else {

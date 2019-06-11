@@ -26,6 +26,7 @@ router.post('/:white/:black', function(req, res){
   count++;
   var game
   var winner = req.body.winner;
+  var looser = req.body.looser;
   console.log(winner);
   User.findOne({email: req.session.email}, function(err, user){
     if(user.name == winner){
