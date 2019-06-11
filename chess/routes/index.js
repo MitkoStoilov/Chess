@@ -21,7 +21,7 @@ router.get('/',function(req, res){
           if (err) throw err;
           if (!results.length) {
             //console.log("Nothing");
-            res.render('index');
+            res.render('index', {layout: false});
           } else {
             //console.log(results);
             res.redirect('/game/'+results[0].player1+'/'+results[0].player2+'/?roomno='+results[0].roomno);
