@@ -19,6 +19,7 @@
           $('#vCount').html(json.victories);
           $('#lCount').html(json.losses);
           $('#user').html(json.user);
+          $('#draws').html(json.draws);
           const url = "/profile/image/" + $('#user').text();
           $('#linkImg').attr("href", url);
         });
@@ -63,6 +64,7 @@
             <ul class="list-group list-group-flush">
               <li class="list-group-item"><p id="victories">Victories: <b id="vCount"></b></p></li>
               <li class="list-group-item"><p id="losses">Losses: <b id="lCount"></b></p></li>
+              <li class="list-group-item"><p id="losses">Draws: <b id="draws"></b></p></li>
             </ul>
         </div>
         <a class="nav-link active" style="margin-left:30px" href="/old/all">View Games</a>

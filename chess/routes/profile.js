@@ -137,7 +137,8 @@ router.get('/status', function(req, res){
     }
     var status = { user: user.name,
                    victories: user.victories,
-                   losses: user.losses
+                   losses: user.losses,
+                   draws: user.draws
                    }
     res.json(status);
   });

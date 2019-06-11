@@ -100,7 +100,8 @@
                   white: white,
                   black: black,
                   roomno: roomno,
-                  winner: winner
+                  winner: winner,
+                  looser: looser
                 });
               }
 
@@ -192,8 +193,10 @@
                 status = 'Game over, ' + moveColor + ' is in checkmate.';
                 if(moveColor == 'White'){
                   winner = black;
+                  looser = white;
                 } else {
                   winner = white;
+                  looser = black;
                 }
                 endGame();
                 if(winner == user){
@@ -204,16 +207,26 @@
               else if(game.in_threefold_repetition()){
                 status = 'Game draw due to threefolded repetition';
                 endGame();
+                if(user == white){
+                  saveGame();
+                }
               }
 
               else if(game.insufficient_material()){
                 status = 'Game over due to insufficient material';
                 endGame();
+                
+                if(user == white){
+                  saveGame();
+                }
               }
 
               else if (game.in_draw() === true) {
                 status = 'Game over, drawn position';
                 endGame();
+                if(user == white){
+                  saveGame();
+                }
               }
 
               else {

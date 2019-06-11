@@ -57,6 +57,11 @@ let userSchema = new Schema({
         default: 0
     },
 
+    draws:{
+      type:Number,
+      default: 0
+    },
+
     elo:{
         type:Number,
         default: 0

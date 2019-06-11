@@ -30,8 +30,10 @@ router.post('/:white/:black', function(req, res){
   User.findOne({email: req.session.email}, function(err, user){
     if(user.name == winner){
       user.victories++;
-    } else {
+    } else if(user.name == looser){
       user.losses++;
+    }else{
+      user.draws++;
     }
     user.save();
   });
