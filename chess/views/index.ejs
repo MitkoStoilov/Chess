@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,13 +38,193 @@
                   <li><a id="linkImg" href="/profile/image/test"><p id="user"><%= username%></p></a></li>
                   <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
               </ul>
+
+
           </div>
           </nav>
+          <p id="q">Are you ready to play?</p>
           <script type="text/javascript">
             $.getJSON('http://localhost:3000/profile/status', function (json) {
               const url = "/profile/image/" + json.user;
               $('#linkImg').attr("href", url);
             });
+
+
+
           </script>
 </body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/game.css">
+    <link rel="stylesheet" href="/css/chessboard-0.3.0.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/js/chessboard-0.3.0.min.js"></script>
+    <script src="/js/chess.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Game</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a class="navbar-brand">Chess</a>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              <li class="nav-item active">
+                <a class="nav-link active" href="/">Home <span class="sr-only"></span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/profile">Profile</a>
+              </li>
+              <li class="nav-item">
+
+                  <a class="nav-link active" href="/query">Play</a>
+
+                </li>
+
+            </ul>
+                <ul class="nav navbar-nav navbar-right">
+                <li><a id="linkImg" href="/profile/image/test"><p id="user"></p></a></li>
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+
+            </ul>
+        </div>
+      </nav>
+
+      <div id = "container" style="float:right; margin-right:160px">
+        <div id="boardContainer">
+          <div id="board" style="width: 400px; margin-top: 30px"></div>
+          <div id="boardInfo">
+            <input type="button" id="flipOrientationBtn" value="Flip orientation"/>
+            <input type="button" id="startPositionBtn" value="Start Position" />
+          </div>
+        </div>
+
+      </div>
+      <p id="q">Are you ready to play?</p>
+      <script type="text/javascript">
+
+
+        $(function(){
+
+            $.getJSON('http://localhost:3000/profile/status', function (json) {
+              const url = "/profile/image/" + json.user;
+              $('#user').html(json.user);
+              $('#linkImg').attr("href", url);
+            });
+
+            var fen;
+            var board,
+              game = new Chess();
+
+
+            var onDragStart = function(source, piece, position, orientation) {
+              if (game.game_over()) return false
+
+              // only pick up pieces for the side to move
+              if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                  (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false
+              }
+
+            };
+
+
+
+            var onDrop = function(source, target) {
+
+              var move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q'
+              });
+
+              if (move === null) return 'snapback';
+
+            };
+
+            var onSnapEnd = function() {
+              board.position(game.fen());
+            };
+
+
+
+
+            var updateStatus = function() {
+              var status = '';
+
+              var moveColor = 'White';
+              if (game.turn() === 'b') {
+                moveColor = 'Black';
+              }
+
+              if (game.in_checkmate() === true) {
+                status = 'Game over, ' + moveColor + ' is in checkmate.';
+
+
+              }
+
+              else if(game.in_threefold_repetition()){
+                status = 'Game draw due to threefolded repetition';
+
+              }
+
+              else if(game.insufficient_material()){
+                status = 'Game over due to insufficient material';
+
+              }
+
+              else if (game.in_draw() === true) {
+                status = 'Game over, drawn position';
+
+              }
+
+              else {
+                status = moveColor + ' to move';
+                if (game.in_check() === true) {
+                  status += ', ' + moveColor + ' is in check';
+                }
+            }
+
+              statusEl.html(status);
+              fenEl.html(game.fen());
+            };
+
+
+            var cfg = {
+              draggable: true,
+              orientation: 'white',
+              position: 'start',
+              onDragStart: onDragStart,
+              onDrop: onDrop,
+              onSnapEnd: onSnapEnd
+            };
+
+
+            board = ChessBoard('board', cfg);
+
+
+
+            $('#flipOrientationBtn').on('click', function(){
+              board.flip();
+            });
+
+            $('#startPositionBtn').on('click', function(){
+              board.start();
+              count = 0;
+            });
+
+          });
+      </script>
+
+  </body>
 </html>
