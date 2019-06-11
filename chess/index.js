@@ -23,6 +23,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/profile');
 const bcrypt = require('bcryptjs');
 
+
 s.app.use(session({secret: 'awesome'}));
 s.app.use(bodyParser.json());
 s.app.use(bodyParser.urlencoded({extended: true}));
