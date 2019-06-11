@@ -23,6 +23,7 @@
           const url = "/profile/image/" + $('#user').text();
           $('#linkImg').attr("href", url);
         });
+
       </script>
     </head>
     <body>
@@ -55,7 +56,12 @@
             </div>
           </nav>
 
+          <div style="float:right; margin-right:50px">
+            <input id="newName" type="text" size="40" placeholder="Type your new username"><br />
+            <br>
+            <input id="sbmt" type="submit" value="Submit">
 
+          </div>
         <div id ="status" class="card" style="width: 18rem;">
 
             <div class="card-header">
@@ -76,7 +82,25 @@
           <br>
           <input class="btn btn-primary" type="submit"value="Submit">
         </form>
+        <br>
 
+        <script type="text/javascript">
+
+                $('#sbmt').on('click', function(){
+
+                  var username = $('#newName').val();
+                  var url = "http://localhost:3000/profile/update/" + username;
+                  $.ajax({
+                    url: url,
+                    type: 'PUT',
+                    success: function(result) {
+                        // Do something with the result
+                    }
+                  });
+                });
+
+
+        </script>
 
     </body>
 </html>

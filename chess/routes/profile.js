@@ -138,10 +138,24 @@ router.get('/status', function(req, res){
     var status = { user: user.name,
                    victories: user.victories,
                    losses: user.losses,
-                   draws: user.draws
+                   draws: user.draws,
+                   password: user.password
                    }
     res.json(status);
   });
+});
+
+router.put('/update/:username', function(req, res){
+  console.log(req.params.username);
+  User.findOne({email: req.session.email}, function(err, user){
+    if(err){
+      throw err;
+    }
+    user.name = req.params.username;
+    req.session.username = req.params.username;
+    user.save();
+  });
+  res.end();
 });
 
 module.exports = router;

@@ -6,6 +6,9 @@ var cors = require('cors');
 var session = require('express-session');
 var passport = require('passport');
 
+var expressValidator = require('express-validator');
+var flash = require('connect-flash');
+
 var s = require('./modules/server.js');
 var play = require('./modules/play-game.js');
 
@@ -30,6 +33,29 @@ s.app.use(bodyParser.urlencoded({extended: true}));
 s.app.use(cors());
 s.app.use(expressLayouts);
 s.app.use(express.static(__dirname + '/views'));
+
+s.app.use(require('connect-flash')());
+s.app.use(function(req, res, next){
+  res.locals.messages = require('express-messages')(req, res);
+  next();
+});
+
+s.app.use(expressValidator({
+  errorFormatter: function(param, msg, value) {
+      var namespace = param.split('.')
+      , root    = namespace.shift()
+      , formParam = root;
+
+    while(namespace.length) {
+      formParam += '[' + namespace.shift() + ']';
+    }
+    return {
+      param : formParam,
+      msg   : msg,
+      value : value
+    };
+  }
+}));
 
 s.app.use('/css', express.static('css'));
 s.app.use('/img', express.static('img'));
