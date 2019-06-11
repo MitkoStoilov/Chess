@@ -59,7 +59,7 @@ router.post('/register', function(req, res){
 });
 
 router.get('/login', function(req, res){
-  res.render('login.ejs', {layout:false});
+  res.render('login.ejs', {layout:true});
 });
 
 router.post('/login',function(req,res,next){
