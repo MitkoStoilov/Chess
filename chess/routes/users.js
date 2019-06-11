@@ -2,35 +2,8 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 
-const multer = require('multer');
-
 const passport = require('passport');
 
-const storage = multer.diskStorage({
-  destination:function(req, file, cb){
-    cb(null, './uploads');
-  },
-  filename: function(req, file, cb){
-    cb(null, Date.now() +file.originalname);
-  }
-});
-
-const fileFilter = (req, file, cb) =>{
-  if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
-    cb(null, true);
-  } else{
-    cb(null, false);
-  }
- 
-  
-}
-
-const upload = multer({
-  storage: storage, 
-  limits: {
-  fileSize: 1024*1024 * 10},
-  fileFilter:fileFilter
-});
 
 var User = require('../models/profile');
 
@@ -39,13 +12,11 @@ router.get('/register', function(req, res){
 });
 
 
-router.post('/register', upload.single("profileImage") ,(req, res) =>{
-  console.log(req.file);
+router.post('/register', function(req, res){
   const email = req.body.email;
   const name = req.body.name;
   const password = req.body.password;
   const password2 = req.body.password2;
-  
 
 /*  req.checkBody('name', 'Name is required').notEmpty();
   req.checkBody('email', 'Email is required').notEmpty();
@@ -63,8 +34,7 @@ router.post('/register', upload.single("profileImage") ,(req, res) =>{
     var newUser = new User({
       email:email,
       name:name,
-      password:password,
-      productImage: req.file.path
+      password:password
     });
 
     bcrypt.genSalt(10, function(err, salt){
@@ -89,7 +59,7 @@ router.post('/register', upload.single("profileImage") ,(req, res) =>{
 });
 
 router.get('/login', function(req, res){
-  res.render('login.ejs', {layout:true});
+  res.render('login.ejs', {layout:false});
 });
 
 router.post('/login',function(req,res,next){
