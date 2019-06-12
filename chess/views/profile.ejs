@@ -7,14 +7,12 @@
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
       <link rel="stylesheet" href="../css/style_profile.css">
       <link rel="stylesheet" href="../css/style.css">
-      <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-      <script src="http://code.jquery.com/jquery-1.12.4.js" ></script>
-      <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
       <script>
+
         $.getJSON('http://localhost:3000/profile/status', function (json) {
           $('#vCount').html(json.victories);
           $('#lCount').html(json.losses);
@@ -56,10 +54,21 @@
             </div>
           </nav>
 
+          <div id="modal">
+
+            <div id = "btns">
+              <p id="chlng"style="color:black;"><span id="question"></span>Are you sure?</p>
+              <input type="button" id="yes" value="Yes" />
+              <input type="button" id="no" value="No" />
+            </div>
+          </div>
+
           <div style="float:right; margin-right:50px">
             <input id="newName" type="text" size="40" placeholder="Type your new username"><br />
             <br>
             <input id="sbmt" type="submit" value="Submit">
+
+            <input id="delete" type="submit" value="Delete profile">
 
           </div>
         <div id ="status" class="card" style="width: 18rem;">
@@ -95,8 +104,34 @@
                     type: 'PUT',
                     success: function(result) {
                         // Do something with the result
+                        window.location.href="/profile";
                     }
                   });
+                });
+
+
+                $('#delete').on('click', function(){
+                  var user = "test";
+                  $('#modal').css('display', 'block');
+                  $('#no').on('click', function(){
+                    $('#modal').css('display', 'none');
+                  });
+                  $('#yes').on('click', function(){
+                    $('#modal').css('display', 'none');
+                    var pass = $('#pass').val();
+                    var url = "http://localhost:3000/profile/delete/";
+                    $.ajax({
+                      url: url,
+                      type: 'DELETE',
+                      body: {"username": user},
+                      success: function(result) {
+                          // Do something with the result
+                          window.location.href="/users/login";
+                      }
+                    });
+
+                  });
+
                 });
 
 

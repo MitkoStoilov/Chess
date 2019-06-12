@@ -131,16 +131,19 @@ router.get('/',function(req,res){
 
 
 router.get('/status', function(req, res){
+
   User.findOne({email: req.session.email}, function(err, user){
     if(err){
       throw err;
     }
+
     var status = { user: user.name,
                    victories: user.victories,
                    losses: user.losses,
                    draws: user.draws,
                    password: user.password
                    }
+    console.log(status);
     res.json(status);
   });
 });
@@ -157,5 +160,25 @@ router.put('/update/:username', function(req, res){
   });
   res.end();
 });
+
+
+router.delete('/delete', function(req, res){
+  User.findOneAndRemove({email: req.session.email}, function(err, user){
+    if(err){
+      throw err;
+    }
+    req.session.destroy(function(err) {
+      if(err) {
+        console.log(err);
+      } else {
+        res.end("done");
+      }
+    });
+  });
+
+  //req.sessio.username = null;*/
+
+});
+
 
 module.exports = router;

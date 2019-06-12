@@ -12,7 +12,7 @@ router.get('/register', function(req, res){
 });
 
 
-router.post('/register', function(req, res){
+router.post('/register', function(req, res, next){
   const email = req.body.email;
   const name = req.body.name;
   const password = req.body.password;
@@ -51,12 +51,13 @@ router.post('/register', function(req, res){
               console.log(err);
               return;
             } else {
-              res.setHeader("Location", "localhost:3000/users/login");
-              res.status(201);
-              //res.json(newUser);
-              res.end();
-              //res.redirect('/users/login');
 
+
+              res.setHeader("Location", "localhost:3000/users/login");
+              //res.redirect('/users/login');
+              res.status(201);
+              res.end("done");
+              //res.json(newUser);
             }
           });
         });
@@ -69,17 +70,21 @@ router.get('/login', function(req, res){
 });
 
 router.post('/login',function(req,res,next){
-  console.log(req.body.username);
   if(req.body.username==undefined){
     res.status(404);
     res.end();
   }else{
     User.findOne({email: req.body.username}, function(err, user){
-      if(err){
-        throw err;
+      if(user==null){
+        //res.redirect('/users/login');
+      }else{
+        if(err){
+          throw err;
+        }
+        req.session.email = user.email;
+        req.session.username = user.name;
       }
-      req.session.email = user.email;
-      req.session.username = user.name;
+
     });
 
     next();

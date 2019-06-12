@@ -1,4 +1,8 @@
-<form method='POST' action="/users/register" style="margin-left:50px">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.12.4.js" ></script>
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div style="margin-left:50px">
   <input type="text" size="40" placeholder="Type your email" id="email" name="email"><br />
   <br>
   <input type="text" size="40" placeholder="Type your username" id="name" name="name"><br />
@@ -7,8 +11,28 @@
   <br>
   <input type="password" size="40" placeholder="Confirm your password" id="password2" name="password2"><br />
   <br>
-  <input type="submit" value="Submit">
-</form>
+  <input id="sbmt" type="button" value="Submit">
+</div>
+
+<script type="text/javascript">
 
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  $('#sbmt').on('click', function(){
+    var email = $('#email').val();
+    var username = $('#name').val();
+    var pass = $('#password').val();
+    var pass2 = $('#password2').val();
+    $.post("http://localhost:3000/users/register", {
+      email:email,
+  	  name:username,
+      password:pass,
+      password2:pass2
+  }, function(data) {
+      // check the returned data, will return 'done' when completed
+      if(data==='done') {
+          // redirect to admin page
+          window.location.href="/users/login";
+      }
+    });
+  });
+</script>
