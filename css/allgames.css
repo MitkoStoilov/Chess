@@ -1,0 +1,39 @@
+#allMoves{
+  /*margin-left: 650px;*/
+  margin-top: 0px;
+  float: right;
+  width: 530px;
+  margin-right: 80px;
+  height: 400px;
+
+}
+
+#t{
+  font-size: 30px;
+}
+
+#text{
+  float: right;
+}
+
+#movesContainer{
+  border: solid;
+  border-width: 1px;
+  height: 400px;
+  width: 530px;
+  overflow-y: scroll;
+}
+
+#boardContainer{
+  float: left;
+  margin-left: 80px;
+}
+
+#players{
+  margin-left: 80px;
+  font-size: 30px;
+}
+
+#optionsForPages{
+  margin-top: -5px;
+}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Games</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/allgames.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/chessboard-0.3.0.min.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/js/chessboard-0.3.0.min.js"></script>
+    <script src="/js/chess.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.12.4.js" ></script>
+    <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  </head>
+  <body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a class="navbar-brand">Chess</a>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              <li class="nav-item active">
+                <a class="nav-link active" href="/">Home <span class="sr-only"></span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/profile">Profile</a>
+              </li>
+              <li class="nav-item">
+
+                  <a class="nav-link active" href="/query">Play</a>
+
+                </li>
+
+            </ul>
+                <ul class="nav navbar-nav navbar-right">
+                <li><a id="linkImg" href="/profile/image/test"><p id="user"><%= username %></p></a></li>
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+
+            </ul>
+        </div>
+      </nav>
+
+    <div id = "allMoves">
+      <p id="t">Moves</p>
+      <div id = "movesContainer">
+        <p id="moves"></p>
+      </div>
+      <br>
+      <div id="optionsForPages">
+        <p id="text">page <span id="txtPage"></span> of total pages: <span id="txtTotal"></span></p>
+        <input class="mybtn" type="button" id="btnPrev" value="previous"/>
+        <input class="mybtn" type="button" id="btnNext" value="next"/>
+        <input class="mybtn" type="button" id="btnLast" value="last page"/>
+      </div>
+
+    </div>
+    <p id="players"><span id="white"></span>(white) vs <span id="black"></span>(black)</p>
+
+    <div id="boardContainer">
+      <div id="board" style="width: 400px"></div>
+      <br>
+      <input class="mybtn" type="button" id="startPositionBtn" value="Start Position" />
+      <input class="mybtn" type="button" id="move1Btn" value="forward" />
+      <input class="mybtn" type="button" id="move2Btn" value="backword" />
+      <input class="mybtn" type="button" id="endPositionBtn" value="End Position" />
+    </div>
+
+    <script>
+      $.getJSON('http://localhost:3000/profile/status', function (json) {
+        const url = "/profile/image/" + json.user;
+        $('#linkImg').attr("href", url);
+      });
+      var movesEl;
+      var btnNext = document.getElementById("btnNext");
+      var btnLast = document.getElementById("btnLast");
+
+      $.getJSON('http://localhost:3000/old/all/games', function (json) {
+
+        $('#txtPage').html(json.games.page);
+        var pages = json.games.pages;
+        $('#txtTotal').html(pages);
+
+
+        $('#moves').html(json.games.docs[0].moves);
+        $('#white').html(json.games.docs[0].player1);
+        $('#black').html(json.games.docs[0].player2);
+        movesEl = document.getElementById("moves").textContent;
+        var moves = movesEl.split("; ");
+
+        var count = 0;
+        var board = ChessBoard('board', 'start');
+        var game = new Chess();
+
+        $('#startPositionBtn').on('click', function(){
+          board.start();
+          count = 0;
+        });
+
+        $('#endPositionBtn').on('click', function(){
+          for(count =0; count <moves.length; count++){
+            board.move(moves[count]);
+          }
+          count--;
+
+        });
+
+        $('#move1Btn').on('click', function() {
+          if(count < moves.length){
+            board.move(moves[count]);
+            count++;
+          }
+        });
+
+        $('#move2Btn').on('click', function() {
+
+        if(count > 0){
+            count--;
+            var substr1 = moves[count].substr(0, 2);
+            var substr2 = moves[count].substr(3);
+            var backmove = substr2 +"-" +  substr1;
+            board.move(backmove);
+          }
+        });
+        var page =document.getElementById("txtPage").textContent;
+        if(page == 1){
+          $('#btnPrev').prop('disabled', true);
+        }
+        if(pages == 1){
+          $('#btnNext').prop('disabled', true);
+        }
+        $(btnNext).click(function() {
+            page++;
+            if(page > 1){
+              $('#btnPrev').prop('disabled', false);
+            }
+            if(page == pages){
+              $('#btnNext').prop('disabled', true);
+            }
+            $.getJSON('http://localhost:3000/old/all/games?page=' + page, function (json) {
+              $('#txtPage').html(json.games.page);
+
+              $('#moves').html(json.games.docs[0].moves);
+              $('#white').html(json.games.docs[0].player1);
+              $('#black').html(json.games.docs[0].player2);
+              movesEl = document.getElementById("moves").textContent;
+              moves = movesEl.split("; ");
+              count = 0;
+              board = ChessBoard('board', 'start');
+            });
+        });
+
+
+        $(btnLast).click(function() {
+            page = pages;
+            if(page > 1){
+              $('#btnPrev').prop('disabled', false);
+            }
+            if(page == pages){
+              $('#btnNext').prop('disabled', true);
+            }
+            $.getJSON('http://localhost:3000/old/all/games?page=' + page, function (json) {
+              $('#txtPage').html(json.games.page);
+
+              $('#moves').html(json.games.docs[0].moves);
+              $('#white').html(json.games.docs[0].player1);
+              $('#black').html(json.games.docs[0].player2);
+              movesEl = document.getElementById("moves").textContent;
+              moves = movesEl.split("; ");
+              count = 0;
+              board = ChessBoard('board', 'start');
+            });
+        });
+
+        $(btnPrev).click(function() {
+            page--;
+            if(page == 1){
+              $('#btnPrev').prop('disabled', true);
+            }
+            if(page < pages){
+              $('#btnNext').prop('disabled', false);
+            }
+            $.getJSON('http://localhost:3000/old/all/games?page=' + page, function (json) {
+              $('#txtPage').html(json.games.page);
+
+              $('#moves').html(json.games.docs[0].moves);
+              $('#white').html(json.games.docs[0].player1);
+              $('#black').html(json.games.docs[0].player2);
+              movesEl = document.getElementById("moves").textContent;
+              moves = movesEl.split("; ");
+              count = 0;
+              board = ChessBoard('board', 'start');
+            });
+        });
+
+      });
+    </script>
+  </body>
+</html>
