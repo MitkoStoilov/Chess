@@ -21,7 +21,8 @@ router.get('/all/games',function(req,res){
   if (page === undefined) {
     page = 1;
   }
-	PlayedGame.paginate( { $or:[  { player1: req.session.username },  { player2: req.session.username } ]}, {page:page, limit:1},(error, result) => {
+  console.log(req.session.username);
+	PlayedGame.paginate( { $or:[  { player1: req.session.username },  { player2: req.session.username} ]}, {page:page, limit:1},(error, result) => {
 	  if (error) {
 		  console.error(error);
 			return null;

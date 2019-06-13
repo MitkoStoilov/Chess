@@ -131,53 +131,65 @@ router.get('/',function(req,res){
 
 
 router.get('/status', function(req, res){
+  if(req.session.email){
+    User.findOne({email: req.session.email}, function(err, user){
+      if(err){
+        throw err;
+      }
 
-  User.findOne({email: req.session.email}, function(err, user){
-    if(err){
-      throw err;
-    }
-
-    var status = { user: user.name,
-                   victories: user.victories,
-                   losses: user.losses,
-                   draws: user.draws,
-                   password: user.password
-                   }
-    console.log(status);
-    res.json(status);
-  });
+      var status = { user: user.name,
+                     victories: user.victories,
+                     losses: user.losses,
+                     draws: user.draws,
+                     password: user.password,
+                     profileImage: user.profileImage
+                     }
+      console.log(status);
+      res.json(status);
+    });
+  }else{
+    res.status(401);
+    res.end();
+  }
 });
 
 router.put('/update/:username', function(req, res){
-  console.log(req.params.username);
-  User.findOne({email: req.session.email}, function(err, user){
-    if(err){
-      throw err;
-    }
-    user.name = req.params.username;
-    req.session.username = req.params.username;
-    user.save();
-  });
-  res.end();
+  if(req.session.email){
+    console.log(req.params.username);
+    User.findOne({email: req.session.email}, function(err, user){
+      if(err){
+        throw err;
+      }
+      user.name = req.params.username;
+      req.session.username = req.params.username;
+      user.save();
+    });
+    res.end();
+  }else{
+    res.status(401);
+    res.end();
+  }
 });
 
 
 router.delete('/delete', function(req, res){
-  User.findOneAndRemove({email: req.session.email}, function(err, user){
-    if(err){
-      throw err;
-    }
-    req.session.destroy(function(err) {
-      if(err) {
-        console.log(err);
-      } else {
-        res.end("done");
+  if(req.session.email){
+    User.findOneAndRemove({email: req.session.email}, function(err, user){
+      if(err){
+        throw err;
       }
+      req.session.destroy(function(err) {
+        if(err) {
+          console.log(err);
+        } else {
+          res.end("done");
+        }
+      });
     });
-  });
-
-  //req.sessio.username = null;*/
-
+  }else{
+    res.status(401);
+    res.end();
+  }
 });
 
 

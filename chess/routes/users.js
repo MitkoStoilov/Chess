@@ -28,9 +28,11 @@ router.post('/register', function(req, res, next){
 
   if(errors){
     console.log("error");
-    res.render('register',{
+    res.status(400);
+    res.end();
+    /*res.render('register',{
       errors:errors
-    });
+    });*/
   } else {
     var newUser = new User({
       email:email,
@@ -53,7 +55,7 @@ router.post('/register', function(req, res, next){
             } else {
 
 
-              res.setHeader("Location", "localhost:3000/users/login");
+              res.setHeader("Location", "localhost:3000/profile/status");
               //res.redirect('/users/login');
               res.status(201);
               res.end("done");
@@ -77,17 +79,20 @@ router.post('/login',function(req,res,next){
     User.findOne({email: req.body.username}, function(err, user){
       if(user==null){
         //res.redirect('/users/login');
+        res.status(404);
+        res.end();
       }else{
         if(err){
           throw err;
         }
         req.session.email = user.email;
         req.session.username = user.name;
+        next();
       }
 
     });
 
-    next();
+
   }
 
 }, passport.authenticate('local', {
