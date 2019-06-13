@@ -2,6 +2,7 @@ var s = require('./server.js');
 var io = require('socket.io').listen(s.server);
 const model = require('../models/game.js');
 const GameModel = model.GameModel;
+var create = require('./game-creation.js');
 
 exports.playGame = function(){
   var waiting = [];
@@ -34,21 +35,7 @@ exports.playGame = function(){
         updateUsers();
       }
       if(waiting.length >= 2){
-        //Saving new game to the DB
-        var roomex = new GameModel({
-          roomno:roomno,
-          player1:waiting[0],
-          player2:waiting[1],
-          gamestate:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-          moves:""
-        });
-        roomex.save()
-           .then(doc => {
-             console.log(doc)
-           })
-           .catch(err => {
-             console.error(err)
-           });
+        create.createGame(waiting[0], waiting[1], roomno);
 
         io.sockets.emit('startGame', {
           player1: waiting[0],
@@ -68,20 +55,7 @@ exports.playGame = function(){
       onlineUsers.splice(onlineUsers.indexOf(data), 1);
       console.log("online:" + onlineUsers.length);
 
-      var roomex = new GameModel({
-        roomno:roomno,
-        player1:socket.username,
-        player2:data,
-        gamestate:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-        moves:""
-      });
-      roomex.save()
-         .then(doc => {
-           console.log(doc)
-         })
-         .catch(err => {
-           console.error(err)
-         });
+      create.createGame(socket.username, data, roomno);
 
       io.sockets.emit('startGame', {
         player1: socket.username,
@@ -141,6 +115,5 @@ exports.playGame = function(){
     function updateUsers(){
       io.sockets.emit('get users', onlineUsers);
     }
-
   });
 }
