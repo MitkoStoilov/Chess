@@ -14,31 +14,10 @@ mongoose.set('useCreateIndex', true);
 router.get('/',function(req, res){
   var ingame = false;
   if(req.session.email) {
-    GameModel.find({player1: req.session.email}, function(err, results){
-      if (err) throw err;
-      if (!results.length) {
-        GameModel.find({player2: req.session.email}, function(err, results){
-          if (err) throw err;
-          if (!results.length) {
-            //console.log("Nothing");
-            res.render('index', {layout: false,
-                                  username: req.session.username});
-          } else {
-            //console.log(results);
-            //res.redirect('/game/'+results[0].player1+'/'+results[0].player2+'/?roomno='+results[0].roomno);
-          }
-        });
-      } else {
-        //console.log(results);
-        //res.redirect('/game/'+results[0].player1+'/'+results[0].player2+'/?roomno='+results[0].roomno);
-      }
-    });
+    res.render('index', {layout: false, username: req.session.username});
   }else {
     res.redirect('/users/register');
   }
-  //res.render('index');
 });
-
-
 
 module.exports = router;

@@ -4,6 +4,8 @@ const model = require('../models/game.js');
 const GameModel = model.GameModel;
 var create = require('./game-creation.js');
 
+var lobby = require('./join-lobby.js');
+
 exports.playGame = function(){
   var waiting = [];
   var onlineUsers = [];
@@ -14,12 +16,8 @@ exports.playGame = function(){
     console.log('Connected: %s sockets connected', connections.length);
 
     socket.on('join lobby', function(data){
-      socket.username = data.name;
-      if(onlineUsers.indexOf(onlineUsers.username) == -1){
-        onlineUsers.push(socket.username);
-        console.log("online:" + onlineUsers.length);
-        updateUsers();
-      }
+      lobby.joinLobby(socket, onlineUsers, data.name);
+      updateUsers();
     });
 
     socket.on('request', function(data){
@@ -36,16 +34,11 @@ exports.playGame = function(){
       }
       if(waiting.length >= 2){
         create.createGame(waiting[0], waiting[1], roomno);
-
-        io.sockets.emit('startGame', {
-          player1: waiting[0],
-          player2: waiting[1],
-          roomno: roomno
-        });
-
+        var players = {player1: waiting[0], player2: waiting[1]};
+        waiting.shift();
+        waiting.shift();
+        startGame(players.player1, players.player2, roomno);
         roomno++;
-        waiting.shift();
-        waiting.shift();
         updateUsers();
       }
     });
@@ -56,13 +49,7 @@ exports.playGame = function(){
       console.log("online:" + onlineUsers.length);
 
       create.createGame(socket.username, data, roomno);
-
-      io.sockets.emit('startGame', {
-        player1: socket.username,
-        player2: data,
-        roomno: roomno
-      });
-
+      startGame(socket.username, data, roomno);
       roomno++;
       updateUsers();
     });
@@ -114,6 +101,15 @@ exports.playGame = function(){
 
     function updateUsers(){
       io.sockets.emit('get users', onlineUsers);
+    }
+
+    function startGame(player1, player2, roomno){
+      io.sockets.emit('startGame', {
+        player1: player1,
+        player2: player2,
+        roomno: roomno
+      });
+
     }
   });
 }

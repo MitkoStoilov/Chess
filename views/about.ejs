@@ -43,7 +43,6 @@
       </nav>
 
       <div id = "container">
-        <p id="user" style="display: none"><%= user%></p>
         <p id="players"><span id="white"><%= white%></span>(white) vs <span id="black"><%= black%></span>(black)</p>
         <p style="display: none">room number: <b><span id="roomno"></span></b></p>
         <div id="boardContainer">
@@ -54,9 +53,7 @@
           <p id="statusP">Status: <span id="status"></span></p>
         </div>
         <div id="game_data">
-
           <!--<p>FEN: <span id="fen"></span></p>-->
-
           <div id = "allMoves">
             <p id="t">Moves:</p>
             <br>
@@ -64,10 +61,6 @@
               <p id="pgn"></p>
             </div>
           </div>
-
-
-          <!--<p>Moves: <span id="pgn"></span></p>-->
-
         </div>
       </div>
 
@@ -123,11 +116,9 @@
               }else if(user !== white && user !== black){
                 return false;
               }
-
             };
 
             var onDrop = function(source, target) {
-
               var move = game.move({
                 from: source,
                 to: target,
@@ -137,7 +128,6 @@
               if (move === null) return 'snapback';
 
               socket.emit('make a move', {fen: game.fen(), move: move, num: roomno});
-
             };
 
             var onSnapEnd = function() {
@@ -146,8 +136,6 @@
 
             var moves = [];
             socket.on('new move', function(data){
-
-            //  board.move(data.move.from+'-'+data.move.to);
               board.position(data.fen);
               moves.push(data.move.from+'-'+data.move.to + "; ");
               movesEl.html(data.moves);
@@ -155,7 +143,6 @@
               game.load(data.fen);
               updateStatus();
             });
-
 
             var updateStatus = function() {
               var status = '';
@@ -216,7 +203,6 @@
               fenEl.html(game.fen());
             };
 
-
             var cfg = {
               draggable: true,
               orientation: 'white',
@@ -226,28 +212,20 @@
               onSnapEnd: onSnapEnd
             };
 
-
             board = ChessBoard('board', cfg);
 
             socket.on('load', function(data) {
               board.position(data.fen);
               game.load(data.fen);
-              /*if(data.player1 !== user){
-                board.flip();
-              }*/
               movesEl.html(data.moves);
               updateStatus();
             });
 
             $.getJSON('http://localhost:3000/profile/status', function (json) {
-              //alert(json.user + data.player1);
               if(json.user!=white){
                 board.flip();
               }
             });
-
-
-
 
             $('#flipOrientationBtn').on('click', function(){
               board.flip();
