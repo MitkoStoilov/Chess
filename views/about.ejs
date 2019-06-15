@@ -98,12 +98,28 @@
                 });
               }
 
+              var deleteGame = function(){
+                var url = "http://localhost:3000/game/" + white + "/" + black + "/" + roomno;
+                $.ajax({
+                  url: url,
+                  type: 'DELETE',
+                  success: function(result) {
+                      // Do something with the result
+                      //window.location.href="//login";
+                  }
+                });
+              }
+
               var saveGame = function(){
                 $.post("http://localhost:3000/game/save", {
                   player1: white,
                   player2: black,
                   moves: movesEl.text(),
-                  roomno: roomno
+                  roomno: roomno,
+                }, function(data){
+                  if(data == "done"){
+                    deleteGame();
+                  }
                 });
               }
 

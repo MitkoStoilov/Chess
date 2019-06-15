@@ -56,10 +56,24 @@ router.post('/save', function(req, res){
         console.log(err);
         return;
       }
-  });
-  GameModel.findOneAndRemove({roomno: req.body.roomno}, function(err, result){
-      if (err) throw err;
-  });
+  })
+  res.setHeader("Location", "localhost:3000/old/all/games");
+  res.status(201);
+  res.end("done")
+});
+
+router.delete('/:white/:black/:roomno', function(req, res){
+  console.log("deleted game in roomno: " + req.params.roomno);
+  if(req.session.username == req.params.white){
+    GameModel.findOneAndRemove({roomno: req.params.roomno}, function(err, result){
+        if (err){
+          throw err;
+        }else{
+          res.status(200);
+          res.end();
+        }
+    });
+  }
 });
 
 router.post('/create', function(req, res){
