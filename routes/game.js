@@ -44,21 +44,20 @@ router.post('/:white/:black', function(req, res){
 });
 
 router.post('/save', function(req, res){
-  PlayedGame.findOne({}, {}, { sort: { 'created_at' : -1 } }, function(err, game) {
-    var newGame = new PlayedGame({
-      player1: req.body.player1,
-      player2: req.body.player2,
-      moves: req.body.moves
-    });
-    newGame.save(function(err){
-        if(err){
-          console.log(err);
-          return;
-        }
-    });
-    GameModel.findOneAndRemove({roomno: req.body.roomno}, function(err, result){
-        if (err) throw err;
-    });
+  console.log(req.body.roomno);
+  var newGame = new PlayedGame({
+    player1: req.body.player1,
+    player2: req.body.player2,
+    moves: req.body.moves
+  });
+  newGame.save(function(err){
+      if(err){
+        console.log(err);
+        return;
+      }
+  });
+  GameModel.findOneAndRemove({roomno: req.body.roomno}, function(err, result){
+      if (err) throw err;
   });
 });
 

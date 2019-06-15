@@ -24,18 +24,15 @@ let gameSchema = new Schema({
     type: Number,
     required: true,
     unique: true
-
   },
   player1:{
     type: String,
-    required: true,
-    unique: true
+    required: true
 
   },
   player2:{
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   gamestate:{
     type: String,
@@ -45,7 +42,7 @@ let gameSchema = new Schema({
   moves:{
     type: String
   },
-  
+
   winner:{
     type: String
   }

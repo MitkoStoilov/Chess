@@ -33,13 +33,13 @@ exports.playGame = function(){
         updateUsers();
       }
       if(waiting.length >= 2){
-        create.createGame(waiting[0], waiting[1], roomno);
+
         var players = {player1: waiting[0], player2: waiting[1]};
         waiting.shift();
         waiting.shift();
-        startGame(players.player1, players.player2, roomno);
+        gameMaker(players, roomno);
         roomno++;
-        updateUsers();
+
       }
     });
 
@@ -48,10 +48,10 @@ exports.playGame = function(){
       onlineUsers.splice(onlineUsers.indexOf(data), 1);
       console.log("online:" + onlineUsers.length);
 
-      create.createGame(socket.username, data, roomno);
-      startGame(socket.username, data, roomno);
+      var players = {player1: socket.username, player2: data};
+      gameMaker(players, roomno);
       roomno++;
-      updateUsers();
+
     });
 
     socket.on('connectToRoom', function(data){
@@ -109,7 +109,14 @@ exports.playGame = function(){
         player2: player2,
         roomno: roomno
       });
+    }
 
+    function gameMaker(players, roomno){
+      create.createGame(players.player1, players.player2, roomno);
+      startGame(players.player1, players.player2, roomno);
+      updateUsers();
+      //roomno++;
+      return roomno;
     }
   });
 }
