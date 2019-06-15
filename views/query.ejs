@@ -75,14 +75,6 @@
 
             socket.emit('join lobby', {name: name});
 
-            socket.on('startGame', function(data){
-              $.post("http://localhost:3000/query", function(d) {
-                  if(d==='done' && (name == data.player1 || name == data.player2) ) {
-                      window.location.href="/game/" + data.player1 + "/" + data.player2 + "/?roomno=" + data.roomno;
-                  }
-              });
-            });
-
             socket.on('get users', function(data){
               var html = '';
               for(i=0; i<data.length; i++){
@@ -91,6 +83,16 @@
                 }
               }
               $users.html(html);
+            });
+
+            socket.on('startGame', function(data){
+              var player1 = data.players.player1;
+              var player2 = data.players.player2;
+              $.post("http://localhost:3000/game/create",{player1: player1, player2:player2, roomno: data.roomno}, function(d) {
+                  if(d=='done' && (name == player1 || name == player2) ) {
+                      window.location.href="/game/" + player1 + "/" + player2 + "/?roomno=" + data.roomno;
+                  }
+              });
             });
 
             $('#joinBtn').on('click', function() {

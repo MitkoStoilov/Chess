@@ -37,9 +37,8 @@ exports.playGame = function(){
         var players = {player1: waiting[0], player2: waiting[1]};
         waiting.shift();
         waiting.shift();
-        gameMaker(players, roomno);
+        io.sockets.emit('startGame', {players, roomno});
         roomno++;
-
       }
     });
 
@@ -49,9 +48,9 @@ exports.playGame = function(){
       console.log("online:" + onlineUsers.length);
 
       var players = {player1: socket.username, player2: data};
-      gameMaker(players, roomno);
+      io.sockets.emit('startGame', {players, roomno});
       roomno++;
-
+      updateUsers();
     });
 
     socket.on('connectToRoom', function(data){
@@ -101,22 +100,6 @@ exports.playGame = function(){
 
     function updateUsers(){
       io.sockets.emit('get users', onlineUsers);
-    }
-
-    function startGame(player1, player2, roomno){
-      io.sockets.emit('startGame', {
-        player1: player1,
-        player2: player2,
-        roomno: roomno
-      });
-    }
-
-    function gameMaker(players, roomno){
-      create.createGame(players.player1, players.player2, roomno);
-      startGame(players.player1, players.player2, roomno);
-      updateUsers();
-      //roomno++;
-      return roomno;
     }
   });
 }

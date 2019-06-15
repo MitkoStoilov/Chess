@@ -7,6 +7,7 @@ const model = require('../models/game.js');
 const GameModel = model.GameModel;
 const User = require('../models/profile');
 const PlayedGame = require('../models/playedGame.js');
+var create = require('../modules/game-creation.js');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -59,6 +60,18 @@ router.post('/save', function(req, res){
   GameModel.findOneAndRemove({roomno: req.body.roomno}, function(err, result){
       if (err) throw err;
   });
+});
+
+router.post('/create', function(req, res){
+  if(req.session.username == req.body.player1){
+    create.create(req, res);
+    res.setHeader("Location", "localhost:3000/game/" + req.body.player1 + "/"
+      + req.body.player2 + "/?roomno=" + req.body.roomno);
+    res.status(201);
+    res.end("done");
+  }else{
+    res.end("done");
+  }
 });
 
 module.exports = router;
