@@ -14,10 +14,25 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 router.get('/:white/:black', function(req, res){
-  res.render('about',{ layout: false,
-    user: req.session.username,
-    white: req.params.white,
-    black: req.params.black
+  var player1 = req.params.white;
+  var player2 = req.params.black;
+  GameModel.findOne({player1: player1, player2: player2, roomno: req.query.roomno}, function(err, result){
+      if (err){
+        throw err;
+      }else {
+        if(result == null){
+          res.status(404);
+          res.end("No such game");
+        }else {
+          res.render('about',{ layout: false,
+            user: req.session.username,
+            white: player1,
+            black: player2
+          });
+          res.status(200);
+          res.end();
+        }
+      }
   });
 });
 
