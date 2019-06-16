@@ -161,10 +161,9 @@ router.put('/update/:username', function(req, res){
         throw err;
       }
       user.name = req.params.username;
-      req.session.username = req.params.username;
       user.save();
+      res.end();
     });
-    res.end();
   }else{
     res.status(401);
     res.end();

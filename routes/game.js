@@ -64,18 +64,24 @@ router.post('/:white/:black', function(req, res){
 });
 
 router.post('/save', function(req, res){
-  console.log(req.body.roomno);
-  var newGame = new PlayedGame({
-    player1: req.body.player1,
-    player2: req.body.player2,
-    moves: req.body.moves
+  User.findOne({name: req.body.player1}, function(err, result){
+    var player1 = result;
+    User.findOne({name: req.body.player2}, function(err, result){
+      var player2 = result;
+      console.log(player1._id);
+      var newGame = new PlayedGame({
+        player1: player1._id,
+        player2: player2._id,
+        moves: req.body.moves
+      });
+      newGame.save(function(err){
+          if(err){
+            console.log(err);
+            return;
+          }
+      });
+    });
   });
-  newGame.save(function(err){
-      if(err){
-        console.log(err);
-        return;
-      }
-  })
   res.setHeader("Location", "localhost:3000/old/all/games");
   res.status(201);
   res.end("done")

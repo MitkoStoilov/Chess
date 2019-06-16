@@ -17,23 +17,37 @@ router.get('/games',function(req,res){
 
 router.get('/all/games',function(req,res){
   var page = req.query.page;
-
   if (page === undefined) {
     page = 1;
   }
-  console.log(req.session.username);
-	PlayedGame.paginate( { $or:[  { player1: req.session.username },  { player2: req.session.username} ]}, {page:page, limit:1},(error, result) => {
-	  if (error) {
-		  console.error(error);
-			return null;
-		}
-		console.log(result);
-		if (result != null) {
-		  res.json({games: result});
-		} else {
-			res.json({});
-	  }
-	});
+  User.findOne({name: req.session.username}, function(err, result){
+    var player = result;
+    PlayedGame.paginate( { $or:[  { player1: player._id },  { player2: player._id} ]}, {page:page, limit:1},(error, result) => {
+  	  if (error) {
+  		  console.error(error);
+  			return null;
+  		}
+  		console.log(result.docs[0].player1);
+
+  		if (result != null) {
+        var game = result;
+        User.findOne({_id: game.docs[0].player1}, function(err, player1){
+          if (err) throw err;
+          game.docs[0].player1 = player1.name;
+          User.findOne({_id: game.docs[0].player2}, function(err, player2){
+            if (err) throw err;
+            game.docs[0].player2 = player2.name;
+            console.log(game);
+            res.json({games: game});
+          });
+        });
+  		} else {
+  			res.json({});
+  	  }
+  	});
+  });
+
+
 });
 
 router.get('/all',function(req,res){

@@ -22,10 +22,10 @@ class Database {
 
 let PlayedGameSchema = new Schema({
     player1: {
-      type:String
+      type: String
     },
     player2: {
-      type:String
+      type: String
     },
     moves: {
       type:String
