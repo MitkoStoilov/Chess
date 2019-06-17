@@ -97,14 +97,22 @@
         var count = 0;
         var board = ChessBoard('board', 'start');
         var game = new Chess();
-
+        var fens = [];
+        fens[0] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        for(var i = 0; i<moves.length; i++){
+          var values = moves[i].split("-");
+          game.move({from: values[0], to: values[1], promotion: 'q' });
+          var a = i;
+          a++;
+          fens[a] = game.fen();
+        }
         $('#startPositionBtn').on('click', function(){
           board.start();
           count = 0;
         });
 
         $('#endPositionBtn').on('click', function(){
-          for(count =0; count <moves.length; count++){
+          for(count =1; count <moves.length; count++){
             board.move(moves[count]);
           }
           count--;
@@ -112,20 +120,24 @@
         });
 
         $('#move1Btn').on('click', function() {
+          count++;
           if(count < moves.length){
-            board.move(moves[count]);
-            count++;
+            board.position(fens[count]);
           }
         });
 
         $('#move2Btn').on('click', function() {
-
-        if(count > 0){
-            count--;
+          if(count == moves.length){
+            count -= 2;
+          }else{
+            count -= 1;
+          }
+          if(count >= 0){
             var substr1 = moves[count].substr(0, 2);
             var substr2 = moves[count].substr(3);
             var backmove = substr2 +"-" +  substr1;
-            board.move(backmove);
+            board.position(fens[count]);
+
           }
         });
         var page =document.getElementById("txtPage").textContent;
@@ -153,6 +165,15 @@
               moves = movesEl.split("; ");
               count = 0;
               board = ChessBoard('board', 'start');
+              fens[0] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+              game.load("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+              for(var i = 0; i<moves.length; i++){
+                var v = moves[i].split("-");
+                game.move({from: v[0], to: v[1], promotion: 'q' });
+                var a = i;
+                a++;
+                fens[a] = game.fen();
+              }
             });
         });
 
@@ -175,6 +196,14 @@
               moves = movesEl.split("; ");
               count = 0;
               board = ChessBoard('board', 'start');
+              game.load("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+              for(var i = 0; i<moves.length; i++){
+                var v = moves[i].split("-");
+                game.move({from: v[0], to: v[1], promotion: 'q' });
+                var a = i;
+                a++;
+                fens[a] = game.fen();
+              }
             });
         });
 
@@ -196,6 +225,14 @@
               moves = movesEl.split("; ");
               count = 0;
               board = ChessBoard('board', 'start');
+              game.load("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+              for(var i = 0; i<moves.length; i++){
+                var v = moves[i].split("-");
+                game.move({from: v[0], to: v[1], promotion: 'q' });
+                var a = i;
+                a++;
+                fens[a] = game.fen();
+              }
             });
         });
 

@@ -33,10 +33,19 @@ router.get('/all/games',function(req,res){
         var game = result;
         User.findOne({_id: game.docs[0].player1}, function(err, player1){
           if (err) throw err;
-          game.docs[0].player1 = player1.name;
+          if(player1 == null){
+            game.docs[0].player1 = "fallen warrior"
+          }else{
+            game.docs[0].player1 = player1.name;
+          }
           User.findOne({_id: game.docs[0].player2}, function(err, player2){
             if (err) throw err;
-            game.docs[0].player2 = player2.name;
+            if(player2 == null){
+              game.docs[0].player2 = "fallen warrior"
+            }else{
+              game.docs[0].player2 = player2.name;
+            }
+            //game.docs[0].player2 = player2.name;
             console.log(game);
             res.json({games: game});
           });
